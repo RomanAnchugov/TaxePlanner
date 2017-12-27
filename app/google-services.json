@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "511292229923",
+    "firebase_url": "https://taxi-planner-6376d.firebaseio.com",
+    "project_id": "taxi-planner-6376d",
+    "storage_bucket": "taxi-planner-6376d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511292229923:android:27dda73c9f1ba935",
+        "android_client_info": {
+          "package_name": "ru.taxiplanner.romananchugov.taxiplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "511292229923-u98i816j649l15g7nkjthtepgp3tfsoi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.taxiplanner.romananchugov.taxiplanner",
+            "certificate_hash": "2c6f7e0227b90ac128745b3da41e56b4ee62468e"
+          }
+        },
+        {
+          "client_id": "511292229923-ive525jrsei26ocplrn9de6v3nc1oiug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3C3zejDctcX8p7ry47Bid732rDxClMtU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "511292229923-ive525jrsei26ocplrn9de6v3nc1oiug.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
