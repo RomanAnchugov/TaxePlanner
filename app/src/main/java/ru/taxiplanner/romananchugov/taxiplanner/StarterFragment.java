@@ -1,6 +1,8 @@
 package ru.taxiplanner.romananchugov.taxiplanner;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * Created by romananchugov on 28.12.2017.
  */
-//TODO: login through google
+
+    //TODO: login through google
+
 public class StarterFragment extends Fragment {
 
     public static final String TAG = "StarterFragment";
@@ -69,7 +73,7 @@ public class StarterFragment extends Fragment {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            //TODO: go to main fragment with list of places and etc...
+            goToSearchFragment();
         }
     }
 
@@ -84,9 +88,20 @@ public class StarterFragment extends Fragment {
 
                             FirebaseUser user = mAuth.getCurrentUser();
                             //TODO: email verification
-                            //user.sendEmailVerification();
-                            //TODO: go to main fragment
-                            //TODO: add user information(name, phone, etc.)
+
+                            //sending verification email
+                            user.sendEmailVerification().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.i(TAG, "Send verification email: successful");
+                                        Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Log.i(TAG, "Send verification email: failed");
+                                        Toast.makeText(getActivity(), "Some problem, try again", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                         } else {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
@@ -101,12 +116,17 @@ public class StarterFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
+                            Log.d(TAG, "signInWithEmail:success -> checking for verification");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            //checking for verify email
                             if(!mAuth.getCurrentUser().isEmailVerified()){
-                                Log.d(TAG, "not verified");
+                                Log.d(TAG, "not verified user");
+                                Toast.makeText(getActivity(), "Please, verify your email", Toast.LENGTH_LONG).show();
+                            }else{
+                                Log.i(TAG, "verified user -> go to main fragment");
+                                goToSearchFragment();
                             }
-                            //TODO: goto main fragment
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -115,5 +135,13 @@ public class StarterFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void goToSearchFragment(){
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        SearchFragment fragment = new SearchFragment();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
     }
 }
