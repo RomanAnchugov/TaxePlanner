@@ -12,6 +12,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -33,37 +34,42 @@ public class SearchFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference myRef;
 
-    private List<PlaceItem> places;
+    private List<OrderItem> orders;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        places = new ArrayList<>();
+        orders = new ArrayList<>();
 
-        for(int i = 0;i < 10; i++){
-            places.add(new PlaceItem("place " + i));
-        }
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("places");
+        myRef = database.getReference("orders");
 
-        myRef.child("place 1").child("place name").setValue(new PlaceItem("test"), new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if(databaseError != null){
-                    Log.e(TAG, "Failed to write data", databaseError.toException());
-                }
-            }
-        });
+        //test code
+        for(int i = 0; i < 10; i++){
+            OrderItem order = new OrderItem();
+            order.setDescription("Description");
+            order.setPlaceFrom("metro 1");
+            order.setPlaceTo("metro 2");
 
-        myRef.setValue(places);
+            orders.add(order);
+        }
+
+        myRef.setValue(orders);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<ArrayList<OrderItem>> generic =
+                        new GenericTypeIndicator<ArrayList<OrderItem>>() {};
+                ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
 
-                Log.d(TAG, "Value is: " + dataSnapshot.getValue());
+                if(list != null) {
+                    for (int i = 0; i < list.size(); i++) {
+                        Log.d(TAG, "Value is: " + list.get(i));
+                    }
+                }
             }
 
             @Override
