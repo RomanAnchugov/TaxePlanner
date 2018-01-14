@@ -6,4 +6,9 @@
     <string name="login">Login</string>
     <string name="from">From</string>
     <string name="to">To</string>
+
+    <string name="order_item_template_from">From: %1$s</string>
+    <string name="order_item_template_to">To: %1$s</string>
+    <string name="order_item_template_date">Date: %1$s</string>
+
 </resources>

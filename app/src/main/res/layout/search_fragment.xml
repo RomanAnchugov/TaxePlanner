@@ -8,10 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <EditText
+            android:id="@+id/search_fragment_place_from_text_view"
             android:hint="@string/from"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <EditText
+            android:id="@+id/search_fragment_place_to_text_view"
             android:hint="@string/to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

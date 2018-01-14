@@ -3,11 +3,16 @@ package ru.taxiplanner.romananchugov.taxiplanner;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,64 +34,191 @@ import java.util.List;
     //TODO: action for floating button
     //TODO firebase database
     //TODO: etc.
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment{
     private static final String TAG = "SearchFragment";
 
     FirebaseDatabase database;
     DatabaseReference myRef;
 
-    private RecyclerView serachFragmentRecyclerView;
+    private RecyclerView searchFragmentRecyclerView;
 
-    private List<OrderItem> orders;
+    private TextView searchPlaceFromTextView;
+    private TextView searchPlaceToTextView;
+
+    private List<OrderItem> orders;//contains whole list of trips
+    private List<OrderItem> ordersWithSearch;//contains list of trips that affected by search
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         orders = new ArrayList<>();
-
+        ordersWithSearch = new ArrayList<>();
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("orders");
+        myRef = database.getReference("orders");//branch "orders" in database
 
-        //test code
-        for(int i = 0; i < 10; i++){
-            OrderItem order = new OrderItem();
-            order.setDescription("Description");
-            order.setPlaceFrom("metro 1");
-            order.setPlaceTo("metro 2");
+//        //test code
+//        for(int i = 0; i < 10; i++){
+//            OrderItem order = new OrderItem();
+//            order.setDescription("Description");
+//            order.setPlaceFrom("metro 1");
+//            order.setPlaceTo("metro 2");
+//            order.setStringForSearch();
+//            order.setDate(1999, 6, 1, 7, 0);
+//
+//            orders.add(order);
+//        }
+//
+//        myRef.setValue(orders);
 
-            orders.add(order);
-        }
-
-        myRef.setValue(orders);
-
+        //if some on orders changed and after first loading
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<ArrayList<OrderItem>> generic =
-                        new GenericTypeIndicator<ArrayList<OrderItem>>() {};
+                GenericTypeIndicator<ArrayList<OrderItem>> generic = new GenericTypeIndicator<ArrayList<OrderItem>>() {};//type indicator
+
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
 
-                if(list != null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        Log.d(TAG, "Value is: " + list.get(i));
-                    }
-                }
+                orders = list;
+                ordersWithSearch.addAll(list);
+
+                searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
+
         });
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.search_fragment, container, false);
-        serachFragmentRecyclerView = v.findViewById(R.id.search_fragment_recycler_view);
+
+        //"place from" search edit text
+        searchPlaceFromTextView = (TextView) v.findViewById(R.id.search_fragment_place_from_text_view);
+        searchPlaceFromTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                ordersWithSearch.clear();
+
+                List<OrderItem> result = new ArrayList<>();
+                String searchRequest1 = charSequence.toString().replaceAll("\\s+", "");//get from text
+                String searchRequest2 = searchPlaceToTextView.getText().toString().replaceAll("\\s+", "");//get to text
+                Log.i(TAG, "Searching with request: " + searchRequest1 + " " + searchRequest2);
+                for(int j = 0; j < orders.size(); j++){
+                    OrderItem item = orders.get(j);
+                    if(item.getStringForSearch().contains(searchRequest1) && item.getStringForSearch().contains(searchRequest2)){
+                        result.add(item);
+                    }
+                }
+
+                ordersWithSearch = result;
+
+                searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+        //"place to" search edit text
+        searchPlaceToTextView = (TextView) v.findViewById(R.id.search_fragment_place_to_text_view);
+        searchPlaceToTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                ordersWithSearch.clear();
+
+                List<OrderItem> result = new ArrayList<>();
+                String searchRequest1 = searchPlaceFromTextView.getText().toString().replaceAll("\\s+", "");//get from text
+                String searchRequest2 = charSequence.toString().replaceAll("\\s+", "");//get to text
+                Log.i(TAG, "Searching with request: " + searchRequest1 + " " + searchRequest2);
+                for(int j = 0; j < orders.size(); j++){
+                    OrderItem item = orders.get(j);
+
+                    if(item.getStringForSearch().contains(searchRequest1) && item.getStringForSearch().contains(searchRequest2)){
+                        result.add(item);
+                    }
+                }
+
+                ordersWithSearch = result;
+
+                searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+        searchFragmentRecyclerView = v.findViewById(R.id.search_fragment_recycler_view);
+        searchFragmentRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        RecyclerView.Adapter adapter = new Adapter();
+        searchFragmentRecyclerView.setAdapter(adapter);
+
         return v;
+    }
+
+
+    //VIEW HOLDER FOR RECYCLER
+    private class ViewHolder extends RecyclerView.ViewHolder{
+
+        TextView placeFromTextView;
+        TextView placeToTextView;
+        TextView dateOfTripTextView;
+
+        public ViewHolder(CardView itemView) {
+            super(itemView);
+            placeFromTextView = (TextView) itemView.findViewById(R.id.order_item_template_from_text_view);
+            placeToTextView = (TextView) itemView.findViewById(R.id.order_item_template_to_text_view);
+            dateOfTripTextView = (TextView) itemView.findViewById(R.id.order_item_template_date_text_view);
+
+        }
+
+        public void onBindViewHolder(int position){
+            OrderItem item = ordersWithSearch.get(position);
+            placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
+            placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
+            dateOfTripTextView.setText(getResources().getString(R.string.order_item_template_date, item.getDate()));
+        }
+
+    }
+
+
+
+    private class Adapter extends RecyclerView.Adapter<ViewHolder>{
+
+        public Adapter(){
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            CardView v = (CardView) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.orders_recycler_item_template, parent, false);//get template for recycler item
+
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            holder.onBindViewHolder(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return ordersWithSearch.size();
+        }
     }
 }
