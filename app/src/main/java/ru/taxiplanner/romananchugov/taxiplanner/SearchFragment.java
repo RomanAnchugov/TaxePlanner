@@ -1,8 +1,11 @@
 package ru.taxiplanner.romananchugov.taxiplanner;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +44,8 @@ public class SearchFragment extends Fragment{
     DatabaseReference myRef;
 
     private RecyclerView searchFragmentRecyclerView;
+
+    private FloatingActionButton createNewOrderButton;
 
     private TextView searchPlaceFromTextView;
     private TextView searchPlaceToTextView;
@@ -112,8 +117,8 @@ public class SearchFragment extends Fragment{
                 ordersWithSearch.clear();
 
                 List<OrderItem> result = new ArrayList<>();
-                String searchRequest1 = charSequence.toString().replaceAll("\\s+", "");//get from text
-                String searchRequest2 = searchPlaceToTextView.getText().toString().replaceAll("\\s+", "");//get to text
+                String searchRequest1 = charSequence.toString().replaceAll("\\s+", "").toLowerCase();//get from text
+                String searchRequest2 = searchPlaceToTextView.getText().toString().replaceAll("\\s+", "").toLowerCase();//get to text
                 Log.i(TAG, "Searching with request: " + searchRequest1 + " " + searchRequest2);
                 for(int j = 0; j < orders.size(); j++){
                     OrderItem item = orders.get(j);
@@ -142,8 +147,8 @@ public class SearchFragment extends Fragment{
                 ordersWithSearch.clear();
 
                 List<OrderItem> result = new ArrayList<>();
-                String searchRequest1 = searchPlaceFromTextView.getText().toString().replaceAll("\\s+", "");//get from text
-                String searchRequest2 = charSequence.toString().replaceAll("\\s+", "");//get to text
+                String searchRequest1 = searchPlaceFromTextView.getText().toString().replaceAll("\\s+", "").toLowerCase();//get from text
+                String searchRequest2 = charSequence.toString().replaceAll("\\s+", "").toLowerCase();//get to text
                 Log.i(TAG, "Searching with request: " + searchRequest1 + " " + searchRequest2);
                 for(int j = 0; j < orders.size(); j++){
                     OrderItem item = orders.get(j);
@@ -166,6 +171,14 @@ public class SearchFragment extends Fragment{
         searchFragmentRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         RecyclerView.Adapter adapter = new Adapter();
         searchFragmentRecyclerView.setAdapter(adapter);
+
+        createNewOrderButton = (FloatingActionButton) v.findViewById(R.id.create_new_order_button);
+        createNewOrderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToCreateNewOrderFragment();
+            }
+        });
 
         return v;
     }
@@ -220,5 +233,13 @@ public class SearchFragment extends Fragment{
         public int getItemCount() {
             return ordersWithSearch.size();
         }
+    }
+
+    public void goToCreateNewOrderFragment(){
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        CreateNewOrderFragment fragment = new CreateNewOrderFragment();
+        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        transaction.commit();
     }
 }

@@ -87,7 +87,6 @@ public class StarterFragment extends Fragment {
                             Log.d(TAG, "createUserWithEmail:success");
 
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //TODO: email verification
 
                             //sending verification email
                             user.sendEmailVerification().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {

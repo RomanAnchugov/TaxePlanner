@@ -21,7 +21,7 @@ public class OrderItem {
     }
 
     public void setStringForSearch() {
-        stringForSearch = placeFrom.replaceAll("\\s+", "")+placeTo.replaceAll("\\s+", "");
+        stringForSearch = placeFrom.replaceAll("\\s+", "").toLowerCase()+placeTo.replaceAll("\\s+", "").toLowerCase();
     }
 
     public void setPlaceFrom(String placeFrom) {
