@@ -54,7 +54,8 @@
                 />
             <LinearLayout
                 android:id="@+id/set_order_date_container"
-                style="@style/ContainerForOrderDetail">
+                style="@style/ContainerForOrderDetail"
+                android:background="?android:attr/selectableItemBackground">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
