@@ -71,11 +71,13 @@ public class SearchFragment extends Fragment{
 //            order.setPlaceTo("metro 2");
 //            order.setStringForSearch();
 //            order.setDate(1999, 6, 1, 7, 0);
+//            order.setNumberOfSlotsInCar(8);
+//            order.setUserCreatedId(FirebaseAuth.getInstance().getUid());
 //
 //            orders.add(order);
 //        }
-//
 //        myRef.setValue(orders);
+
 
         //if some on orders changed and after first loading
         myRef.addValueEventListener(new ValueEventListener() {

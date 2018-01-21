@@ -22,5 +22,6 @@
     <string name="you_number_is">You number is</string>
     <string name="create_order_sign"><![CDATA[>]]></string>
     <string name="set_order_date_status">%1$s.%2$s.%3$s</string>
+    <string name="number_of_seats_in_car">Number of seats in car</string>
 
 </resources>

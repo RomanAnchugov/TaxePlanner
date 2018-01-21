@@ -42,20 +42,21 @@
             android:hint="@string/name_of_street_or_station"/>
 
 
-
+        <!--Linear layout for pickers -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
 
+            <!--DATE PICKER -->
             <View
                 style="@style/LightGrayHorizontalLine"
                 />
             <LinearLayout
                 android:id="@+id/set_order_date_container"
                 style="@style/ContainerForOrderDetail"
-                android:background="?android:attr/selectableItemBackground">
+                >
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,14 +81,13 @@
 
             </LinearLayout>
 
+            <!--TIME PICKER-->
             <View
                 style="@style/LightGrayHorizontalLine"
                 />
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp">
+                android:id="@+id/set_order_time_container"
+                style="@style/ContainerForOrderDetail">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -99,6 +99,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"/>
                 <TextView
+                    android:id="@+id/set_order_time_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -109,14 +110,12 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp" />
             </LinearLayout>
+
+            <!--TRIP DESCRIPTION PICKER -->
             <View
                 style="@style/LightGrayHorizontalLine"/>
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp">
+                style="@style/ContainerForOrderDetail">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -139,9 +138,36 @@
                     android:paddingEnd="15dp" />
             </LinearLayout>
 
+            <!--NUMBER OF SEATS-->
             <View
                 style="@style/LightGrayHorizontalLine"/>
-        </LinearLayout>
+            <LinearLayout
+                style="@style/ContainerForOrderDetail">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_of_seats_in_car"
+                    android:layout_weight="1"
+                    style="@style/BrightDarkColor"
+                    android:gravity="start"
+                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/BrightDarkColor"
+                    android:text="@string/not_written"
+                    android:gravity="end"
+                    android:paddingRight="15dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp" />
+            </LinearLayout>
+            <View
+                style="@style/LightGrayHorizontalLine"/>
+
+        </LinearLayout><!--LinearLayout for pickers -->
 
         <Button
             android:id="@+id/submit_new_order_button"
@@ -154,6 +180,6 @@
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
             />
-    </LinearLayout>
+    </LinearLayout><!--MAIN LinearLAYOUT -->
 
 </ScrollView>

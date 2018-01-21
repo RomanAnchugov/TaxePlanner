@@ -1,15 +1,16 @@
-package ru.taxiplanner.romananchugov.taxiplanner;
+package ru.taxiplanner.romananchugov.taxiplanner.pickers;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 import java.util.Calendar;
+
+import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
 
 /**
  * Created by romananchugov on 20.01.2018.
@@ -42,9 +43,7 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         //date that chosen
-        //TODO: format of date with zero
-        textView.setText(getResources().getString(R.string.set_order_date_status, day + "", (month + 1) + "", year + ""));
-        orderItem.setDate(year, month, day);
-        Log.i(TAG, year + " " + month + " " + day);
+        orderItem.setDate(year, month + 1, day);
+        textView.setText(orderItem.getDate());
     }
 }
