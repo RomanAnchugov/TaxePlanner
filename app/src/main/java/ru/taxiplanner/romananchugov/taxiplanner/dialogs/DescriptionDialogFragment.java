@@ -32,7 +32,7 @@ public class DescriptionDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 dismiss();
             }
-        })
+        });
         return builder.create();
     }
 
