@@ -11,8 +11,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import ru.taxiplanner.romananchugov.taxiplanner.pickers.DatePickerDialogFragment;
-import ru.taxiplanner.romananchugov.taxiplanner.pickers.TimePickerDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
 
 /**
  * Created by romananchugov on 15.01.2018.
@@ -27,6 +28,9 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
 
     private LinearLayout orderTimeContainer;
     private TextView orderTimeStatus;
+
+    private LinearLayout orderDescriptionContainer;
+    private TextView orderDescriptionStatus;
 
     private Button submitNewOrderButton;
 
@@ -46,6 +50,10 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
         orderTimeStatus = (TextView) v.findViewById(R.id.set_order_time_status);
         orderTimeContainer.setOnClickListener(this);
 
+        orderDescriptionContainer = (LinearLayout) v.findViewById(R.id.set_order_description_container);
+        orderDescriptionStatus = (TextView) v.findViewById(R.id.set_order_description_status);
+        orderDescriptionContainer.setOnClickListener(this);
+
         submitNewOrderButton = (Button) v.findViewById(R.id.submit_new_order_button);
         submitNewOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +61,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 Log.i(TAG, orderItem.getDate());
             }
         });
+
 
         return v;
     }
@@ -65,6 +74,9 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 break;
             case R.id.set_order_time_container:
                 new TimePickerDialogFragment(orderItem, orderTimeStatus).show(getFragmentManager(), "time picker");
+                break;
+            case R.id.set_order_description_container:
+                new DescriptionDialogFragment().show(getFragmentManager(), "description dialog");
                 break;
         }
     }

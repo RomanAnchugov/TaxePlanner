@@ -1,4 +1,4 @@
-package ru.taxiplanner.romananchugov.taxiplanner.pickers;
+package ru.taxiplanner.romananchugov.taxiplanner.dialogs;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;

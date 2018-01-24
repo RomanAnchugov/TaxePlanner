@@ -115,6 +115,7 @@
             <View
                 style="@style/LightGrayHorizontalLine"/>
             <LinearLayout
+                android:id="@+id/set_order_description_container"
                 style="@style/ContainerForOrderDetail">
                 <TextView
                     android:layout_width="match_parent"
@@ -127,6 +128,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"/>
                 <TextView
+                    android:id="@+id/set_order_description_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
