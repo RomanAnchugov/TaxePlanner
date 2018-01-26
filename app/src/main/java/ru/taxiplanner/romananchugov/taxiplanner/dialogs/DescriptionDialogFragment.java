@@ -33,6 +33,7 @@ public class DescriptionDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
+
         return builder.create();
     }
 
