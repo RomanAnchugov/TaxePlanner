@@ -61,8 +61,6 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 Log.i(TAG, orderItem.getDate());
             }
         });
-
-
         return v;
     }
 
@@ -80,4 +78,6 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 break;
         }
     }
+
+
 }
