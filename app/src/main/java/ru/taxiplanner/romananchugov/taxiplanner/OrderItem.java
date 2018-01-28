@@ -7,6 +7,7 @@ package ru.taxiplanner.romananchugov.taxiplanner;
 public class OrderItem {
     private String placeFrom;
     private String placeTo;
+
     private int year;
     private int month;
     private int day;
@@ -14,10 +15,23 @@ public class OrderItem {
     private int minutes;
     private String date;
     private String time;
+
     private String description;
+
     private String stringForSearch;
+
     private String userCreatedId;
-    private int numberOfSlotsInCar;
+
+    private int numberOfSeatsInCar;
+    private int numberOfOccupiedSeats;
+
+    public int getNumberOfOccupiedSeats() {
+        return numberOfOccupiedSeats;
+    }
+
+    public void setNumberOfOccupiedSeats(int numberOfOccupiedSeats) {
+        this.numberOfOccupiedSeats = numberOfOccupiedSeats;
+    }
 
     public String getStringForSearch() {
         return stringForSearch;
@@ -99,6 +113,80 @@ public class OrderItem {
         this.description = description;
     }
 
+    public void setDate(int year, int month, int day){
+        this.year = year;
+        this.month = month;
+        this.day = day;
+
+        String result = "";
+
+        if(day < 10){
+            result += "0" + day;
+        }else{
+            result += day;
+        }
+
+        result += ".";
+
+        if(month < 10){
+            result += "0" + month;
+        }else{
+            result += month;
+        }
+
+        result += "." + year;
+
+        date = result;
+    }
+
+    public void setStringForSearch(String stringForSearch) {
+        this.stringForSearch = stringForSearch;
+    }
+
+    public String getUserCreatedId() {
+        return userCreatedId;
+    }
+
+    public void setUserCreatedId(String userCreatedId) {
+        this.userCreatedId = userCreatedId;
+    }
+
+    public int getNumberOfSeatsInCar() {
+        return numberOfSeatsInCar;
+    }
+
+    public void setNumberOfSeatsInCar(int numberOfSeatsInCar) {
+        this.numberOfSeatsInCar = numberOfSeatsInCar;
+    }
+
+    public void setTime(int minutes, int hour){
+        this.hour = hour;
+        this.minutes = minutes;
+
+        String result = "";
+
+        if(hour < 10){
+            result += "0" + hour;
+        }else{
+            result += hour;
+        }
+
+        result += ":";
+
+        if(minutes < 10){
+            result += "0" + minutes;
+        }else{
+            result += minutes;
+        }
+
+        time = result;
+
+    }
+
+    public String getTime() {
+        return time;
+    }
+
     public void setDate(int year, int month, int day, int hour, int minutes){
         this.year = year;
         this.month = month;
@@ -144,78 +232,5 @@ public class OrderItem {
 
         date = result;
 
-    }
-    public void setDate(int year, int month, int day){
-        this.year = year;
-        this.month = month;
-        this.day = day;
-
-        String result = "";
-
-        if(day < 10){
-            result += "0" + day;
-        }else{
-            result += day;
-        }
-
-        result += ".";
-
-        if(month < 10){
-            result += "0" + month;
-        }else{
-            result += month;
-        }
-
-        result += "." + year;
-
-        date = result;
-    }
-
-    public void setStringForSearch(String stringForSearch) {
-        this.stringForSearch = stringForSearch;
-    }
-
-    public String getUserCreatedId() {
-        return userCreatedId;
-    }
-
-    public void setUserCreatedId(String userCreatedId) {
-        this.userCreatedId = userCreatedId;
-    }
-
-    public int getNumberOfSlotsInCar() {
-        return numberOfSlotsInCar;
-    }
-
-    public void setNumberOfSlotsInCar(int numberOfSlotsInCar) {
-        this.numberOfSlotsInCar = numberOfSlotsInCar;
-    }
-
-    public void setTime(int minutes, int hour){
-        this.hour = hour;
-        this.minutes = minutes;
-
-        String result = "";
-
-        if(hour < 10){
-            result += "0" + hour;
-        }else{
-            result += hour;
-        }
-
-        result += ":";
-
-        if(minutes < 10){
-            result += "0" + minutes;
-        }else{
-            result += minutes;
-        }
-
-        time = result;
-
-    }
-
-    public String getTime() {
-        return time;
     }
 }

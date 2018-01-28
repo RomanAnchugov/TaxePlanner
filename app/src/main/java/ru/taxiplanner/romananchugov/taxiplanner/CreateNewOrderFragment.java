@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.NumberOfSeatsDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
 
 /**
@@ -25,6 +26,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
 
     private static final String TAG = "CreateNewOrderFragment";
     private static final int REQUEST_CODE_FOR_DESCRIPTION = 1;
+    private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
 
     private LinearLayout orderDateContainer;
     private TextView orderDateStatus;
@@ -98,6 +100,13 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                         -create new .xml and other staff
                         -add sharing data between dialog and fragment like in previous case
                  */
+
+                Bundle args1 = new Bundle();
+                args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, orderNumberOfSeatsStatus.getText().toString());
+                NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment();
+                numberOfSeatsDialogFragment.setArguments(args1);
+                numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
+                numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");
                 break;
         }
     }
@@ -117,6 +126,15 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                     }else{
                         orderDescriptionStatus.setText(getResources().getString(R.string.not_written));
                     }
+                }
+                break;
+            case REQUEST_CODE_FOR_NUMBER_OF_SEATS:
+                if(resultCode == Activity.RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    String numberOfSeats = bundle.getString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, "fuck");
+                    orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeats));
+                    Log.i(TAG, "onActivityResult: " + numberOfSeats);
+                    orderNumberOfSeatsStatus.setText(numberOfSeats);
                 }
                 break;
         }

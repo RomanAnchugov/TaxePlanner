@@ -71,8 +71,10 @@ public class SearchFragment extends Fragment{
 //            order.setPlaceTo("metro 2");
 //            order.setStringForSearch();
 //            order.setDate(1999, 6, 1, 7, 0);
-//            order.setNumberOfSlotsInCar(8);
+//            order.setNumberOfSeatsInCar(8);
 //            order.setUserCreatedId(FirebaseAuth.getInstance().getUid());
+//            order.setNumberOfOccupiedSeats(0);
+//            order.setNumberOfSeatsInCar(4);
 //
 //            orders.add(order);
 //        }
