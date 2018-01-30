@@ -67,12 +67,8 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
         orderNumberOfSeatsContainer.setOnClickListener(this);
 
         submitNewOrderButton = (Button) v.findViewById(R.id.submit_new_order_button);
-        submitNewOrderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, orderItem.getDate());
-            }
-        });
+        submitNewOrderButton.setOnClickListener(this);
+
         return v;
     }
 

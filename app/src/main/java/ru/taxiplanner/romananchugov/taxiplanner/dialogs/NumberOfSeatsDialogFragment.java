@@ -35,7 +35,7 @@ public class NumberOfSeatsDialogFragment extends DialogFragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                textView.setText(seekBar.getProgress());
+                textView.setText(i + "");
             }
 
             @Override
