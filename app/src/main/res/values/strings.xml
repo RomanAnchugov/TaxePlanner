@@ -25,5 +25,6 @@
     <string name="number_of_seats_in_car">Number of seats in car</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
+    <string name="fill_all_gaps">Please, fill all the gaps</string>
 
 </resources>

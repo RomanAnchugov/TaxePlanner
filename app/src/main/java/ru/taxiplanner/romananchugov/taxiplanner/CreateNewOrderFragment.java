@@ -5,13 +5,19 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;
@@ -27,6 +33,9 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
     private static final String TAG = "CreateNewOrderFragment";
     private static final int REQUEST_CODE_FOR_DESCRIPTION = 1;
     private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
+
+    private EditText orderPlaceFromEditText;
+    private EditText orderPlaceToEditText;
 
     private LinearLayout orderDateContainer;
     private TextView orderDateStatus;
@@ -49,6 +58,41 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.create_new_order_fragment, container, false);
         orderItem = new OrderItem();
+
+        orderPlaceFromEditText = (EditText) v.findViewById(R.id.set_order_place_from_edit_text);
+        orderPlaceFromEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                orderItem.setPlaceFrom(charSequence + "");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        orderPlaceToEditText = (EditText) v.findViewById(R.id.set_order_place_to_edit_text);
+        orderPlaceToEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                orderItem.setPlaceTo(charSequence + "");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         orderDateContainer = (LinearLayout) v.findViewById(R.id.set_order_date_container);
         orderDateStatus = (TextView) v.findViewById(R.id.set_order_date_status);
@@ -91,11 +135,6 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 descriptionDialogFragment.show(getFragmentManager(), "description dialog");
                 break;
             case R.id.set_number_of_seats_container:
-                /*TODO: create dialog fragment fragment for choosing number of seats, and some additions:
-                        -create new fields in database for maxValueOfSeats and currentValueOfSeats
-                        -create new .xml and other staff
-                        -add sharing data between dialog and fragment like in previous case
-                 */
 
                 Bundle args1 = new Bundle();
                 args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, orderNumberOfSeatsStatus.getText().toString());
@@ -104,6 +143,15 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
                 numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");
                 break;
+            case R.id.submit_new_order_button:
+                orderItem.setUserCreatedId(FirebaseAuth.getInstance().getUid());
+                if(orderItem.getDate().equals("")|| orderItem.getTime().equals("") ||
+                        orderItem.getPlaceFrom().equals("") || orderItem.getPlaceTo().equals("") ||
+                        orderItem.getDescription().equals("") || orderItem.getNumberOfSeatsInCar() == 0){
+                    Snackbar.make(getView(), R.string.fill_all_gaps , Snackbar.LENGTH_LONG).show();
+                }
+                Log.i(TAG, "onClick: \n" + orderItem.toString());
+
         }
     }
 

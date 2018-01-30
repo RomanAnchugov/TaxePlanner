@@ -11,9 +11,10 @@ public class OrderItem {
     private int year;
     private int month;
     private int day;
+    private String date;
+
     private int hour;
     private int minutes;
-    private String date;
     private String time;
 
     private String description;
@@ -24,6 +25,15 @@ public class OrderItem {
 
     private int numberOfSeatsInCar;
     private int numberOfOccupiedSeats;
+
+    public OrderItem(){
+        date = "";
+        time = "";
+        placeTo = "";
+        placeFrom = "";
+        description = "";
+        numberOfSeatsInCar = 0;
+    }
 
     public int getNumberOfOccupiedSeats() {
         return numberOfOccupiedSeats;
@@ -232,5 +242,18 @@ public class OrderItem {
 
         date = result;
 
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        result += "PlaceFrom: " + placeFrom + "\n";
+        result += "PlaceTo: " + placeTo + "\n";
+        result += "Date: " + date + "\n";
+        result += "Time: " + time + "\n";
+        result += "OrderDescription: " + description + "\n";
+        result += "NumberOfSeatsInCar: " + numberOfSeatsInCar + "\n";
+        result += "UserCreatedId: " + userCreatedId + "\n";
+        return result;
     }
 }

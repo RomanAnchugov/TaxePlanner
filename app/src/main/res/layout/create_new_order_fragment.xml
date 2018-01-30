@@ -21,6 +21,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp" />
         <EditText
+            android:id="@+id/set_order_place_from_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -36,6 +37,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"/>
         <EditText
+            android:id="@+id/set_order_place_to_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
