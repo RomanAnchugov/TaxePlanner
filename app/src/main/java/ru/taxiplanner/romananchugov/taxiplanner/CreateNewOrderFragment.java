@@ -1,5 +1,6 @@
 package ru.taxiplanner.romananchugov.taxiplanner;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -18,6 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.List;
 
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;
@@ -28,11 +33,14 @@ import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment
  * Created by romananchugov on 15.01.2018.
  */
 
+@SuppressLint("ValidFragment")
 public class CreateNewOrderFragment extends DialogFragment implements View.OnClickListener {
 
     private static final String TAG = "CreateNewOrderFragment";
     private static final int REQUEST_CODE_FOR_DESCRIPTION = 1;
     private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
+
+    private List<OrderItem> orders;
 
     private EditText orderPlaceFromEditText;
     private EditText orderPlaceToEditText;
@@ -52,6 +60,11 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
     private Button submitNewOrderButton;
 
     private OrderItem orderItem;
+
+    @SuppressLint("ValidFragment")
+    public CreateNewOrderFragment(List<OrderItem> orders) {
+        this.orders = orders;
+    }
 
     @Nullable
     @Override
@@ -145,11 +158,19 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 break;
             case R.id.submit_new_order_button:
                 orderItem.setUserCreatedId(FirebaseAuth.getInstance().getUid());
+                orderItem.setStringForSearch();
+
                 if(orderItem.getDate().equals("")|| orderItem.getTime().equals("") ||
                         orderItem.getPlaceFrom().equals("") || orderItem.getPlaceTo().equals("") ||
                         orderItem.getDescription().equals("") || orderItem.getNumberOfSeatsInCar() == 0){
                     Snackbar.make(getView(), R.string.fill_all_gaps , Snackbar.LENGTH_LONG).show();
+                }else {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("orders");
+                    orders.add(orderItem);
+                    databaseReference.setValue(orders);
+                    dismiss();
                 }
+
                 Log.i(TAG, "onClick: \n" + orderItem.toString());
 
         }

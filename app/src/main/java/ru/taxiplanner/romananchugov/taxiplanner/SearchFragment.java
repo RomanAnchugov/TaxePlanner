@@ -62,7 +62,7 @@ public class SearchFragment extends Fragment{
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("orders");//branch "orders" in database
-
+//
 //        //test code
 //        for(int i = 0; i < 10; i++){
 //            OrderItem order = new OrderItem();
@@ -90,6 +90,15 @@ public class SearchFragment extends Fragment{
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
 
                 orders = list;
+
+                //validation of deleted orders
+                for(int i = 0; i < orders.size(); i++){
+                    if(orders.get(i) == null){
+                        orders.remove(i);
+                        i--;
+                    }
+                }
+
                 ordersWithSearch.addAll(list);
 
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
@@ -205,9 +214,11 @@ public class SearchFragment extends Fragment{
 
         public void onBindViewHolder(int position){
             OrderItem item = ordersWithSearch.get(position);
-            placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
-            placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
-            dateOfTripTextView.setText(getResources().getString(R.string.order_item_template_date, item.getDate()));
+            if(item != null) {
+                placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
+                placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
+                dateOfTripTextView.setText(getResources().getString(R.string.order_item_template_date, item.getDate()));
+            }
         }
 
     }
@@ -242,7 +253,7 @@ public class SearchFragment extends Fragment{
     public void goToCreateNewOrderFragment(){
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        CreateNewOrderFragment fragment = new CreateNewOrderFragment();
+        CreateNewOrderFragment fragment = new CreateNewOrderFragment(orders);
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
     }
