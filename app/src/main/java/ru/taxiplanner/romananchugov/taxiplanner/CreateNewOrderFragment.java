@@ -3,6 +3,8 @@ package ru.taxiplanner.romananchugov.taxiplanner;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -62,7 +64,9 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
     private OrderItem orderItem;
 
     @SuppressLint("ValidFragment")
-
+    public CreateNewOrderFragment(List<OrderItem> orders) {
+        this.orders = orders;
+    }
 
     @Nullable
     @Override
@@ -166,8 +170,11 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("orders");
                     orders.add(orderItem);
                     databaseReference.setValue(orders);
-                    dismiss();
-                    //TODO: need to backwards to search fragment and need to change date formating in new orders
+                    FragmentManager manager = getFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    SearchFragment fragment = new SearchFragment();
+                    transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+                    transaction.commit();
                 }
 
                 Log.i(TAG, "onClick: \n" + orderItem.toString());
