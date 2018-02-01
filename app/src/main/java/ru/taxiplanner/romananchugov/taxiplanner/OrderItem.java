@@ -256,4 +256,8 @@ public class OrderItem {
         result += "UserCreatedId: " + userCreatedId + "\n";
         return result;
     }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 }

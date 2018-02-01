@@ -25,7 +25,9 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by romananchugov on 30.12.2017.
@@ -50,20 +52,20 @@ public class SearchFragment extends Fragment{
     private TextView searchPlaceFromTextView;
     private TextView searchPlaceToTextView;
 
-    private List<OrderItem> orders;//contains whole list of trips
-    private List<OrderItem> ordersWithSearch;//contains list of trips that affected by search
+    private HashMap<String, OrderItem> orders;//contains whole list of trips
+    private HashMap<String, OrderItem> ordersWithSearch;//contains list of trips that affected by search
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        orders = new ArrayList<>();
-        ordersWithSearch = new ArrayList<>();
+        orders = new HashMap<>();
+        ordersWithSearch = new HashMap<>();
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("orders");//branch "orders" in database
-//
-//        //test code
+
+        //test code
 //        for(int i = 0; i < 10; i++){
 //            OrderItem order = new OrderItem();
 //            order.setDescription("Description");
@@ -76,9 +78,9 @@ public class SearchFragment extends Fragment{
 //            order.setNumberOfOccupiedSeats(0);
 //            order.setNumberOfSeatsInCar(4);
 //
-//            orders.add(order);
+//            myRef.push().setValue(order);
 //        }
-//        myRef.setValue(orders);
+
 
 
         //if some on orders changed and after first loading
@@ -87,19 +89,19 @@ public class SearchFragment extends Fragment{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<ArrayList<OrderItem>> generic = new GenericTypeIndicator<ArrayList<OrderItem>>() {};//type indicator
 
-                ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
+                HashMap<String, OrderItem> list = (HashMap<String, OrderItem>) dataSnapshot.getValue();
 
                 orders = list;
 
                 //validation of deleted orders
-                for(int i = 0; i < orders.size(); i++){
-                    if(orders.get(i) == null){
-                        orders.remove(i);
-                        i--;
-                    }
-                }
+//                for(int i = 0; i < orders.size(); i++){
+//                    if(orders.get(i) == null){
+//                        orders.remove(i);
+//                        i--;
+//                    }
+//                }
 
-                ordersWithSearch.addAll(list);
+                ordersWithSearch.putAll(list);
 
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
@@ -133,14 +135,8 @@ public class SearchFragment extends Fragment{
                 String searchRequest1 = charSequence.toString().replaceAll("\\s+", "").toLowerCase();//get from text
                 String searchRequest2 = searchPlaceToTextView.getText().toString().replaceAll("\\s+", "").toLowerCase();//get to text
                 Log.i(TAG, "Searching with request: " + searchRequest1 + " " + searchRequest2);
-                for(int j = 0; j < orders.size(); j++){
-                    OrderItem item = orders.get(j);
-                    if(item.getStringForSearch().contains(searchRequest1) && item.getStringForSearch().contains(searchRequest2)){
-                        result.add(item);
-                    }
-                }
 
-                ordersWithSearch = result;
+                ordersWithSearch = search(searchRequest1, searchRequest2);
 
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
@@ -163,15 +159,8 @@ public class SearchFragment extends Fragment{
                 String searchRequest1 = searchPlaceFromTextView.getText().toString().replaceAll("\\s+", "").toLowerCase();//get from text
                 String searchRequest2 = charSequence.toString().replaceAll("\\s+", "").toLowerCase();//get to text
                 Log.i(TAG, "Searching with request: " + searchRequest1 + " " + searchRequest2);
-                for(int j = 0; j < orders.size(); j++){
-                    OrderItem item = orders.get(j);
 
-                    if(item.getStringForSearch().contains(searchRequest1) && item.getStringForSearch().contains(searchRequest2)){
-                        result.add(item);
-                    }
-                }
-
-                ordersWithSearch = result;
+                ordersWithSearch = search(searchRequest1, searchRequest2);
 
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
@@ -213,7 +202,10 @@ public class SearchFragment extends Fragment{
         }
 
         public void onBindViewHolder(int position){
-            OrderItem item = ordersWithSearch.get(position);
+            OrderItem item = null;
+            Backendless.Data.mapTableToClass( "NAME OF THE RELATED TABLE", MyRelatedClass.class );
+            List<OrderItem> list = new ArrayList<>(ordersWithSearch.values());
+            item = list.get(position);
             if(item != null) {
                 placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
                 placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
@@ -253,8 +245,26 @@ public class SearchFragment extends Fragment{
     public void goToCreateNewOrderFragment(){
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        CreateNewOrderFragment fragment = new CreateNewOrderFragment(orders);
+        CreateNewOrderFragment fragment = new CreateNewOrderFragment();
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
+    }
+
+    public HashMap<String, OrderItem> search(String forSearch1, String forSearch2){
+        HashMap<String, OrderItem> result = null;
+//        for(int j = 0; j < orders.size(); j++){
+//            OrderItem item = orders.get(j);
+//
+//            if(item.getStringForSearch().contains(searchRequest1) && item.getStringForSearch().contains(searchRequest2)){
+//                result.add(item);
+//            }
+//        }
+        for(Map.Entry<String, OrderItem> item: ordersWithSearch.entrySet()){
+            if(item.getValue().getStringForSearch().contains(forSearch1)
+                    && item.getValue().getStringForSearch().contains(forSearch2)){
+                result.put(item.getKey(), item.getValue());
+            }
+        }
+        return result;
     }
 }

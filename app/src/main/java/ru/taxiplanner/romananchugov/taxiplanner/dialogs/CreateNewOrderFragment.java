@@ -1,4 +1,4 @@
-package ru.taxiplanner.romananchugov.taxiplanner;
+package ru.taxiplanner.romananchugov.taxiplanner.dialogs;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -24,10 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
-import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;
-import ru.taxiplanner.romananchugov.taxiplanner.dialogs.NumberOfSeatsDialogFragment;
-import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.R;
 
 /**
  * Created by romananchugov on 15.01.2018.
@@ -62,7 +60,9 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
     private OrderItem orderItem;
 
     @SuppressLint("ValidFragment")
-
+    public CreateNewOrderFragment(List<OrderItem> orders) {
+        this.orders = orders;
+    }
 
     @Nullable
     @Override
@@ -167,7 +167,6 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                     orders.add(orderItem);
                     databaseReference.setValue(orders);
                     dismiss();
-                    //TODO: need to backwards to search fragment and need to change date formating in new orders
                 }
 
                 Log.i(TAG, "onClick: \n" + orderItem.toString());
