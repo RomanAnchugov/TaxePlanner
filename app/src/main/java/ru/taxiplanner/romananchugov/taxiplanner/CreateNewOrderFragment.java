@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -167,14 +170,24 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                         orderItem.getDescription().equals("") || orderItem.getNumberOfSeatsInCar() == 0){
                     Snackbar.make(getView(), R.string.fill_all_gaps , Snackbar.LENGTH_LONG).show();
                 }else {
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("orders");
-                    orders.add(orderItem);
-                    databaseReference.setValue(orders);
-                    FragmentManager manager = getFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    SearchFragment fragment = new SearchFragment();
-                    transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
-                    transaction.commit();
+
+                    ConnectivityManager cm =
+                            (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+                    if(activeNetwork != null) {
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("orders");
+                        orders.add(orderItem);
+                        databaseReference.setValue(orders);
+                        FragmentManager manager = getFragmentManager();
+                        FragmentTransaction transaction = manager.beginTransaction();
+                        SearchFragment fragment = new SearchFragment();
+                        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+                        transaction.commit();
+                    }else{
+                        Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
+                    }
                 }
 
                 Log.i(TAG, "onClick: \n" + orderItem.toString());
