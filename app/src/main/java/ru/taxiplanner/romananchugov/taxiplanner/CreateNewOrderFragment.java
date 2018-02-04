@@ -24,9 +24,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
@@ -66,6 +71,8 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
 
     private OrderItem orderItem;
 
+    private DatabaseReference databaseReference;
+
     @SuppressLint("ValidFragment")
     public CreateNewOrderFragment(List<OrderItem> orders) {
         this.orders = orders;
@@ -76,6 +83,34 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.create_new_order_fragment, container, false);
         orderItem = new OrderItem();
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("orders");
+
+        //allows to change orders list on fly, when internet is available
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<ArrayList<OrderItem>> generic = new GenericTypeIndicator<ArrayList<OrderItem>>() {};//type indicator
+
+                ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
+
+                orders = list;
+
+                //validation of deleted orders
+                for(int i = 0; i < orders.size(); i++){
+                    if(orders.get(i) == null){
+                        orders.remove(i);
+                        i--;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
+            }
+
+        });
 
         orderPlaceFromEditText = (EditText) v.findViewById(R.id.set_order_place_from_edit_text);
         orderPlaceFromEditText.addTextChangedListener(new TextWatcher() {
@@ -165,6 +200,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                 orderItem.setUserCreatedId(FirebaseAuth.getInstance().getUid());
                 orderItem.setStringForSearch();
 
+                //validation and filling of all gaps
                 if(orderItem.getDate().equals("")|| orderItem.getTime().equals("") ||
                         orderItem.getPlaceFrom().equals("") || orderItem.getPlaceTo().equals("") ||
                         orderItem.getDescription().equals("") || orderItem.getNumberOfSeatsInCar() == 0){
@@ -176,10 +212,11 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
 
                     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
+                    //check internet connection
                     if(activeNetwork != null) {
-                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("orders");
-                        orders.add(orderItem);
-                        databaseReference.setValue(orders);
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders/" + orders.size());
+                        ref.setValue(orderItem);
+
                         FragmentManager manager = getFragmentManager();
                         FragmentTransaction transaction = manager.beginTransaction();
                         SearchFragment fragment = new SearchFragment();
