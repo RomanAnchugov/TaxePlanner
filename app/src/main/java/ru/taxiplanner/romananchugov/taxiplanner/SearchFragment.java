@@ -6,7 +6,9 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -43,6 +45,7 @@ public class SearchFragment extends Fragment{
     FirebaseDatabase database;
     DatabaseReference myRef;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView searchFragmentRecyclerView;
 
     private FloatingActionButton createNewOrderButton;
@@ -181,7 +184,11 @@ public class SearchFragment extends Fragment{
         });
 
         searchFragmentRecyclerView = v.findViewById(R.id.search_fragment_recycler_view);
-        searchFragmentRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        //searchFragmentRecyclerView.setLayoutManager(linearLayoutManager);
+        searchFragmentRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        //Log.i(TAG, "onCreateView: can scroll vertically" + searchFragmentRecyclerView.canScrollHorizontally());
         RecyclerView.Adapter adapter = new Adapter();
         searchFragmentRecyclerView.setAdapter(adapter);
 
@@ -190,6 +197,14 @@ public class SearchFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 goToCreateNewOrderFragment();
+            }
+        });
+
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i(TAG, "onRefresh: methid");
             }
         });
 
@@ -254,6 +269,7 @@ public class SearchFragment extends Fragment{
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         CreateNewOrderFragment fragment = new CreateNewOrderFragment(orders);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
     }

@@ -220,6 +220,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                         FragmentManager manager = getFragmentManager();
                         FragmentTransaction transaction = manager.beginTransaction();
                         SearchFragment fragment = new SearchFragment();
+                        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
                         transaction.commit();
                     }else{
