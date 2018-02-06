@@ -188,7 +188,6 @@ public class SearchFragment extends Fragment{
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //searchFragmentRecyclerView.setLayoutManager(linearLayoutManager);
         searchFragmentRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        //Log.i(TAG, "onCreateView: can scroll vertically" + searchFragmentRecyclerView.canScrollHorizontally());
         RecyclerView.Adapter adapter = new Adapter();
         searchFragmentRecyclerView.setAdapter(adapter);
 
