@@ -88,6 +88,7 @@ public class SearchFragment extends Fragment{
 //        myRef.setValue(orders);
 
 
+        //TODO: add progress bar while loading database
         //if some on orders changed and after first loading
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -291,6 +292,7 @@ public class SearchFragment extends Fragment{
         transaction.commit();
     }
     public void goToOrderDetailsFragment(int position){
+        //TODO: animation for opening fragment from this element(radial transformation)
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         OrderDetailsFragment fragment = new OrderDetailsFragment(orders, position);

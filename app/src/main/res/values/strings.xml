@@ -27,5 +27,7 @@
     <string name="done">Done</string>
     <string name="fill_all_gaps">Please, fill all the gaps</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="order_item_template_description">Description: %1$s</string>
+    <string name="order_item_template_number_seats">Number of available seats : %1$d</string>
 
 </resources>
