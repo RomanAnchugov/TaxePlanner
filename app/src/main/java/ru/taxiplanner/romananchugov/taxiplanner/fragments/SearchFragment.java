@@ -1,4 +1,4 @@
-package ru.taxiplanner.romananchugov.taxiplanner;
+package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -29,6 +29,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.R;
 
 /**
  * Created by romananchugov on 30.12.2017.
@@ -204,7 +207,7 @@ public class SearchFragment extends Fragment{
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i(TAG, "onRefresh: method");
+                Log.e(TAG, "onRefresh: method");
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -227,10 +230,18 @@ public class SearchFragment extends Fragment{
 
         public ViewHolder(CardView itemView) {
             super(itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i(TAG, "onClick: yea, it works!!!");
+                    goToOrderDetailsFragment(getAdapterPosition());
+                }
+            });
+
             placeFromTextView = (TextView) itemView.findViewById(R.id.order_item_template_from_text_view);
             placeToTextView = (TextView) itemView.findViewById(R.id.order_item_template_to_text_view);
             dateOfTripTextView = (TextView) itemView.findViewById(R.id.order_item_template_date_text_view);
-
         }
 
         public void onBindViewHolder(int position){
@@ -275,6 +286,14 @@ public class SearchFragment extends Fragment{
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         CreateNewOrderFragment fragment = new CreateNewOrderFragment(orders);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        transaction.commit();
+    }
+    public void goToOrderDetailsFragment(int position){
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        OrderDetailsFragment fragment = new OrderDetailsFragment(orders, position);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();

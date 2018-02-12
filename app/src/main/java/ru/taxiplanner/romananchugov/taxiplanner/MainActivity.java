@@ -5,6 +5,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import ru.taxiplanner.romananchugov.taxiplanner.fragments.StarterFragment;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
