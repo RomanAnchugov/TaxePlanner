@@ -53,10 +53,12 @@ public class OrderItem {
 
     public void setPlaceFrom(String placeFrom) {
         this.placeFrom = placeFrom;
+        setStringForSearch();
     }
 
     public void setPlaceTo(String placeTo) {
         this.placeTo = placeTo;
+        setStringForSearch();
     }
 
     public String getPlaceFrom() {
