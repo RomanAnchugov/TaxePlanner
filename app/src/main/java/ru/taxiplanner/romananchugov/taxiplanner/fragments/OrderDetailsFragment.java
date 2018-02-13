@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -39,6 +40,7 @@ public class OrderDetailsFragment extends Fragment {
 
     private List<OrderItem> orders;
     private int position;
+    private OrderItem orderItem;
 
     private EditText placeFromEditText;
     private EditText placeToEditText;
@@ -46,6 +48,8 @@ public class OrderDetailsFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
+
+    private Menu menu;
 
     public OrderDetailsFragment(List<OrderItem> orders, int position) {
         this.orders = orders;
@@ -62,6 +66,7 @@ public class OrderDetailsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.order_details_menu, menu);
+        this.menu = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -77,7 +82,7 @@ public class OrderDetailsFragment extends Fragment {
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
 
-        final OrderItem orderItem = orders.get(position);
+        orderItem = orders.get(position);
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
@@ -98,36 +103,65 @@ public class OrderDetailsFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(TAG, "onClick: functional button");
 
-                //check internet connection
-                ConnectivityManager cm =
-                        (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                dateEditText.setEnabled(true);
+                dateEditText.setText(orderItem.getDate());
+                descriptionEditText.setEnabled(true);
+                descriptionEditText.setText(orderItem.getDescription());
+                numberOfSeatsEditText.setEnabled(true);
+                numberOfSeatsEditText.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats() + "");
+                placeFromEditText.setEnabled(true);
+                placeFromEditText.setText(orderItem.getPlaceFrom());
+                placeToEditText.setEnabled(true);
+                placeToEditText.setText(orderItem.getPlaceTo());
 
-                if(activeNetwork != null) {
+                placeFromEditText.requestFocus();
 
-                    dateEditText.setEnabled(true);
-                    descriptionEditText.setEnabled(true);
-                    numberOfSeatsEditText.setEnabled(true);
-                    placeFromEditText.setEnabled(true);
-                    placeToEditText.setEnabled(true);
-
-
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders/" + position);
-                    ref.setValue(orderItem);
-
-
-                }else{
-                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
-                }
+                MenuItem item = menu.findItem(R.id.order_details_submit_menu_item);
+                item.setVisible(true);
             }
         });
 
-        //TODO: editable/uneditable implementation for users
-        //-if ids the same you can edit this order
-        //if not, you can't edit, but can join it
-
         return v;
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.order_details_submit_menu_item:
+                setNewData();
+                updateDatabase();
+                getActivity().getFragmentManager().popBackStackImmediate();
+        }
+        return false;
+    }
+
+    public void setNewData() {
+        //TODO: validating
+        if (orderItem != null) {
+            Log.i(TAG, "setNewData: before " + orderItem.toString());
+            orderItem.setPlaceFrom(placeFromEditText.getText().toString());
+            orderItem.setPlaceTo(placeToEditText.getText().toString());
+            orderItem.setDate(dateEditText.getText().toString());
+            orderItem.setDescription(descriptionEditText.getText().toString());
+            orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
+            Log.i(TAG, "setNewData: after " + orderItem.toString());
+        }
+    }
+
+    public void updateDatabase() {
+        //check internet connection
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if (activeNetwork != null) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders/" + position);
+            ref.setValue(orderItem);
+            Log.i(TAG, "updateDatabase: sat new value");
+        } else {
+            Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
+        }
     }
 
 }
