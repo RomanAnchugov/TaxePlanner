@@ -89,6 +89,7 @@ public class SearchFragment extends Fragment{
 
 
         //TODO: add progress bar while loading database
+        //TODO: sort by date in recycler
         //if some on orders changed and after first loading
         myRef.addValueEventListener(new ValueEventListener() {
             @Override

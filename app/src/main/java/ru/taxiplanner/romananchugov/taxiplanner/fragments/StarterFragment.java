@@ -27,6 +27,7 @@ import ru.taxiplanner.romananchugov.taxiplanner.R;
  */
 
     //TODO: login through google
+    //TODO: add progress bars while loading something
 
 public class StarterFragment extends Fragment {
 

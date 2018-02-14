@@ -104,22 +104,31 @@ public class OrderDetailsFragment extends Fragment {
                 Log.i(TAG, "onClick: functional button");
 
                 //TODO: create users database!!!
+                if(FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
+                    dateEditText.setEnabled(true);
+                    dateEditText.setText(orderItem.getDate());
+                    descriptionEditText.setEnabled(true);
+                    descriptionEditText.setText(orderItem.getDescription());
+                    numberOfSeatsEditText.setEnabled(true);
+                    numberOfSeatsEditText.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats() + "");
+                    placeFromEditText.setEnabled(true);
+                    placeFromEditText.setText(orderItem.getPlaceFrom());
+                    placeToEditText.setEnabled(true);
+                    placeToEditText.setText(orderItem.getPlaceTo());
 
-                dateEditText.setEnabled(true);
-                dateEditText.setText(orderItem.getDate());
-                descriptionEditText.setEnabled(true);
-                descriptionEditText.setText(orderItem.getDescription());
-                numberOfSeatsEditText.setEnabled(true);
-                numberOfSeatsEditText.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats() + "");
-                placeFromEditText.setEnabled(true);
-                placeFromEditText.setText(orderItem.getPlaceFrom());
-                placeToEditText.setEnabled(true);
-                placeToEditText.setText(orderItem.getPlaceTo());
+                    placeFromEditText.requestFocus();
 
-                placeFromEditText.requestFocus();
-
-                MenuItem item = menu.findItem(R.id.order_details_submit_menu_item);
-                item.setVisible(true);
+                    MenuItem item = menu.findItem(R.id.order_details_submit_menu_item);
+                    item.setVisible(true);
+                }else{
+                    //TODO: array of joined users
+                    //TODO: opportunity to leave the order
+                    if(orderItem.getNumberOfOccupiedSeats() < orderItem.getNumberOfSeatsInCar()) {
+                        orderItem.setNumberOfOccupiedSeats(orderItem.getNumberOfOccupiedSeats() + 1);
+                    }else{
+                        Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
+                    }
+                }
             }
         });
 
@@ -140,7 +149,6 @@ public class OrderDetailsFragment extends Fragment {
     }
 
     public boolean setNewData() {
-        //TODO: validating
         if (orderItem != null && validate()) {
             Log.i(TAG, "setNewData: before \n" + orderItem.toString());
             orderItem.setPlaceFrom(placeFromEditText.getText().toString());
