@@ -103,6 +103,8 @@ public class OrderDetailsFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(TAG, "onClick: functional button");
 
+                //TODO: create users database!!!
+
                 dateEditText.setEnabled(true);
                 dateEditText.setText(orderItem.getDate());
                 descriptionEditText.setEnabled(true);
@@ -129,23 +131,28 @@ public class OrderDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.order_details_submit_menu_item:
-                setNewData();
-                updateDatabase();
-                getActivity().getFragmentManager().popBackStackImmediate();
+                if(setNewData()) {
+                    updateDatabase();
+                    getActivity().getFragmentManager().popBackStackImmediate();
+                }
         }
         return false;
     }
 
-    public void setNewData() {
+    public boolean setNewData() {
         //TODO: validating
-        if (orderItem != null) {
-            Log.i(TAG, "setNewData: before " + orderItem.toString());
+        if (orderItem != null && validate()) {
+            Log.i(TAG, "setNewData: before \n" + orderItem.toString());
             orderItem.setPlaceFrom(placeFromEditText.getText().toString());
             orderItem.setPlaceTo(placeToEditText.getText().toString());
             orderItem.setDate(dateEditText.getText().toString());
             orderItem.setDescription(descriptionEditText.getText().toString());
             orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
-            Log.i(TAG, "setNewData: after " + orderItem.toString());
+            Log.i(TAG, "setNewData: after \n" + orderItem.toString());
+            return true;
+        }else{
+            Snackbar.make(getView(), "Please fill all gaps", Snackbar.LENGTH_LONG).show();
+            return false;
         }
     }
 
@@ -162,6 +169,12 @@ public class OrderDetailsFragment extends Fragment {
         } else {
             Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    public boolean validate(){
+        return !placeFromEditText.getText().toString().equals("") && !placeToEditText.getText().toString().equals("")
+                && !dateEditText.getText().toString().equals("") && !descriptionEditText.getText().toString().equals("")
+                && !numberOfSeatsEditText.getText().toString().equals("");
     }
 
 }
