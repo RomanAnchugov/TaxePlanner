@@ -3,8 +3,6 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -219,12 +217,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders/" + orders.size());
                         ref.setValue(orderItem);
 
-                        FragmentManager manager = getFragmentManager();
-                        FragmentTransaction transaction = manager.beginTransaction();
-                        SearchFragment fragment = new SearchFragment();
-                        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
-                        transaction.commit();
+                        getActivity().getFragmentManager().popBackStackImmediate();
                     }else{
                         Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
                     }
