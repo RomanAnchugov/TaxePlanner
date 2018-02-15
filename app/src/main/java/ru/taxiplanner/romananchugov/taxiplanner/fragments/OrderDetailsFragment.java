@@ -108,6 +108,7 @@ public class OrderDetailsFragment extends Fragment {
                 Log.i(TAG, "onClick: functional button");
 
                 if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
+                    //TODO: remade editing with dialogs
                     dateEditText.setEnabled(true);
                     dateEditText.setText(orderItem.getDate());
                     timeEditText.setEnabled(true);
