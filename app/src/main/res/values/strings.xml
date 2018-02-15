@@ -9,7 +9,7 @@
 
     <string name="order_item_template_from">From: %1$s</string>
     <string name="order_item_template_to">To: %1$s</string>
-    <string name="order_item_template_date">Date: %1$s</string>
+    <string name="order_item_template_date">Date: %1$s %2$s</string>
     <string name="from_text_for_create_new_order_fragment">From</string>
     <string name="name_of_street_or_station">Name of street or station</string>
     <string name="to_text_for_create_new_order_fragment">To</string>

@@ -1,4 +1,6 @@
-package ru.taxiplanner.romananchugov.taxiplanner;
+package ru.taxiplanner.romananchugov.taxiplanner.service;
+
+import java.util.ArrayList;
 
 /**
  * Created by romananchugov on 03.01.2018.
@@ -25,6 +27,24 @@ public class OrderItem {
 
     private int numberOfSeatsInCar;
     private int numberOfOccupiedSeats;
+
+    private ArrayList<UserItem> joinedUsers;
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public ArrayList<UserItem> getJoinedUsers() {
+        return joinedUsers;
+    }
+
+    public void addJoinedUser(UserItem user){
+        joinedUsers.add(user);
+    }
+
+    public void setJoinedUsers(ArrayList<UserItem> joinedUsers) {
+        this.joinedUsers = joinedUsers;
+    }
 
     public OrderItem(){
         date = "";
@@ -224,7 +244,7 @@ public class OrderItem {
 
         time = result;
 
-        result += " ";
+        result = " ";
 
         if(day < 10){
             result += "0" + day;

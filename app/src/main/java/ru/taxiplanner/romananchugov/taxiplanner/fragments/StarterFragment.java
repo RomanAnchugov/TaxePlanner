@@ -19,8 +19,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 /**
  * Created by romananchugov on 28.12.2017.
@@ -96,6 +98,8 @@ public class StarterFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
+                                        UserItem userItem = new UserItem("TestName", "TestSurname", "8080808");
+                                        FirebaseDatabase.getInstance().getReference("users/" + mAuth.getUid()).setValue(userItem);
                                         Log.i(TAG, "Send verification email: successful");
                                         Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
                                     }else{

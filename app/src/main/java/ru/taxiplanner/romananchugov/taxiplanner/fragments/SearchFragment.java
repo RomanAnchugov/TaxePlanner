@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,7 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 
 /**
@@ -69,23 +70,23 @@ public class SearchFragment extends Fragment{
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("orders");//branch "orders" in database
-//
-//        //test code
-//        for(int i = 0; i < 10; i++){
-//            OrderItem order = new OrderItem();
-//            order.setDescription("Description");
-//            order.setPlaceFrom("metro 1");
-//            order.setPlaceTo("metro 2");
-//            order.setStringForSearch();
-//            order.setDate(1999, 6, 1, 7, 0);
-//            order.setNumberOfSeatsInCar(8);
-//            order.setUserCreatedId(FirebaseAuth.getInstance().getUid());
-//            order.setNumberOfOccupiedSeats(0);
-//            order.setNumberOfSeatsInCar(4);
-//
-//            orders.add(order);
-//        }
-//        myRef.setValue(orders);
+
+        //test code
+        for(int i = 0; i < 10; i++){
+            OrderItem order = new OrderItem();
+            order.setDescription("Description");
+            order.setPlaceFrom("metro 1");
+            order.setPlaceTo("metro 2");
+            order.setStringForSearch();
+            order.setDate(1999, 6, 1, 7, 0);
+            order.setNumberOfSeatsInCar(8);
+            order.setUserCreatedId(FirebaseAuth.getInstance().getUid());
+            order.setNumberOfOccupiedSeats(0);
+            order.setNumberOfSeatsInCar(4);
+
+            orders.add(order);
+        }
+        myRef.setValue(orders);
 
 
         //TODO: add progress bar while loading database
@@ -108,6 +109,7 @@ public class SearchFragment extends Fragment{
                     }
                 }
 
+                ordersWithSearch.clear();
                 ordersWithSearch.addAll(list);
 
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
@@ -251,7 +253,7 @@ public class SearchFragment extends Fragment{
             if(item != null) {
                 placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
                 placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
-                dateOfTripTextView.setText(getResources().getString(R.string.order_item_template_date, item.getDate()));
+                dateOfTripTextView.setText(getResources().getString(R.string.order_item_template_date, item.getTime(),item.getDate()));
             }
         }
 

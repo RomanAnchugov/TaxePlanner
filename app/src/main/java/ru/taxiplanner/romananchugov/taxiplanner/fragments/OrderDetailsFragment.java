@@ -25,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 
 /**
@@ -86,7 +86,7 @@ public class OrderDetailsFragment extends Fragment {
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
-        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
+        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(),orderItem.getDate()));
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
         numberOfSeatsEditText.setText(
                 getString(R.string.order_item_template_number_seats,
@@ -106,7 +106,7 @@ public class OrderDetailsFragment extends Fragment {
                 //TODO: create users database!!!
                 if(FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
                     dateEditText.setEnabled(true);
-                    dateEditText.setText(orderItem.getDate());
+                    dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(), orderItem.getDate()));
                     descriptionEditText.setEnabled(true);
                     descriptionEditText.setText(orderItem.getDescription());
                     numberOfSeatsEditText.setEnabled(true);

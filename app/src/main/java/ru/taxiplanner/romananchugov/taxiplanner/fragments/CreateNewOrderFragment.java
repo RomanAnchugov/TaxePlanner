@@ -32,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;

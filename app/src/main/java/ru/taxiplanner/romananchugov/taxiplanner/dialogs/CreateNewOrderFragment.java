@@ -24,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 
 /**

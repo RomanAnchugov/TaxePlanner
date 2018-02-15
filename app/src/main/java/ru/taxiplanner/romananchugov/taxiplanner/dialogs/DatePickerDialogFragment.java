@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
-import ru.taxiplanner.romananchugov.taxiplanner.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
 /**
  * Created by romananchugov on 20.01.2018.
