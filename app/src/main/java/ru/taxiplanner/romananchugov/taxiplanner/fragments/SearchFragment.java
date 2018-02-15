@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +54,8 @@ public class SearchFragment extends Fragment{
     private RecyclerView searchFragmentRecyclerView;
 
     private FloatingActionButton createNewOrderButton;
+
+    private ProgressBar progressBar;
 
     private TextView searchPlaceFromTextView;
     private TextView searchPlaceToTextView;
@@ -111,6 +114,7 @@ public class SearchFragment extends Fragment{
                 ordersWithSearch.clear();
                 ordersWithSearch.addAll(list);
 
+                progressBar.setVisibility(View.GONE);
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
@@ -193,7 +197,6 @@ public class SearchFragment extends Fragment{
         searchFragmentRecyclerView = v.findViewById(R.id.search_fragment_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //searchFragmentRecyclerView.setLayoutManager(linearLayoutManager);
         searchFragmentRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         RecyclerView.Adapter adapter = new Adapter();
         searchFragmentRecyclerView.setAdapter(adapter);
@@ -219,6 +222,8 @@ public class SearchFragment extends Fragment{
                 }, 1500);
             }
         });
+
+        progressBar = v.findViewById(R.id.search_fragment_progress_bar);
 
         return v;
     }

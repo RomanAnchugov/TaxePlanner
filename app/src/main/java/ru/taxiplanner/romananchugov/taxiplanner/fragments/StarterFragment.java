@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,6 +42,7 @@ public class StarterFragment extends Fragment {
     private EditText userPassword;
     private Button registrationButton;
     private Button loginButton;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,10 +58,12 @@ public class StarterFragment extends Fragment {
         userEmail = v.findViewById(R.id.user_email_edit_text);
         userPassword = v.findViewById(R.id.user_password_edit_text);
         registrationButton = v.findViewById(R.id.user_registration_button);
+        progressBar = v.findViewById(R.id.starter_fragment_progress_bar);
         registrationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createAccount(userEmail.getText().toString(), userPassword.getText().toString());
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
         loginButton = v.findViewById(R.id.user_login_button);
@@ -67,6 +71,7 @@ public class StarterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 signIn(userEmail.getText().toString(), userPassword.getText().toString());
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
         return v;
@@ -87,6 +92,7 @@ public class StarterFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
@@ -98,7 +104,7 @@ public class StarterFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        UserItem userItem = new UserItem("TestName", "TestSurname", "8080808");
+                                        UserItem userItem = new UserItem("TestName", "TestSurname", "TestPhone");
                                         FirebaseDatabase.getInstance().getReference("users/" + mAuth.getUid()).setValue(userItem);
                                         Log.i(TAG, "Send verification email: successful");
                                         Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
@@ -120,6 +126,7 @@ public class StarterFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success -> checking for verification");
