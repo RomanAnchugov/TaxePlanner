@@ -28,21 +28,24 @@ public class OrderItem {
     private int numberOfSeatsInCar;
     private int numberOfOccupiedSeats;
 
-    private ArrayList<UserItem> joinedUsers;
+    private ArrayList<String> joinedUsers;
 
     public void setTime(String time) {
         this.time = time;
     }
 
-    public ArrayList<UserItem> getJoinedUsers() {
+    public ArrayList<String> getJoinedUsers() {
         return joinedUsers;
     }
 
-    public void addJoinedUser(UserItem user){
+    public void addJoinedUser(String user){
         joinedUsers.add(user);
     }
+    public void removeJoinedUser(String user){
+        joinedUsers.remove(user);
+    }
 
-    public void setJoinedUsers(ArrayList<UserItem> joinedUsers) {
+    public void setJoinedUsers(ArrayList<String> joinedUsers) {
         this.joinedUsers = joinedUsers;
     }
 
@@ -53,6 +56,7 @@ public class OrderItem {
         placeFrom = "";
         description = "";
         numberOfSeatsInCar = 0;
+        joinedUsers = new ArrayList<>();
     }
 
     public int getNumberOfOccupiedSeats() {

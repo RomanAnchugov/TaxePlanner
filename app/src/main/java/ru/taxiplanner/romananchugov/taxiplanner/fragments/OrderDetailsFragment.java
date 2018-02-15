@@ -25,8 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
 /**
  * Created by romananchugov on 12.02.2018.
@@ -86,14 +86,15 @@ public class OrderDetailsFragment extends Fragment {
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
-        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(),orderItem.getDate()));
+        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(), orderItem.getDate()));
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
         numberOfSeatsEditText.setText(
                 getString(R.string.order_item_template_number_seats,
                         orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats())
         );
         functionButton.setText(
-                FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId()) ? "Edit" : "Join"
+                FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId()) ? "Edit"
+                        : orderItem.getJoinedUsers().contains(FirebaseAuth.getInstance().getUid()) ? "Leave" : "Join"
         );
 
         functionButton.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +104,7 @@ public class OrderDetailsFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(TAG, "onClick: functional button");
 
-                //TODO: create users database!!!
-                if(FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
+                if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
                     dateEditText.setEnabled(true);
                     dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(), orderItem.getDate()));
                     descriptionEditText.setEnabled(true);
@@ -120,15 +120,23 @@ public class OrderDetailsFragment extends Fragment {
 
                     MenuItem item = menu.findItem(R.id.order_details_submit_menu_item);
                     item.setVisible(true);
-                }else{
-                    //TODO: array of joined users
-                    //TODO: opportunity to leave the order
-                    if(orderItem.getNumberOfOccupiedSeats() < orderItem.getNumberOfSeatsInCar()) {
-                        orderItem.setNumberOfOccupiedSeats(orderItem.getNumberOfOccupiedSeats() + 1);
+                } else {
+                    if (!joined(FirebaseAuth.getInstance().getUid())) {
+                        if (orderItem.getNumberOfOccupiedSeats() < orderItem.getNumberOfSeatsInCar()) {
+                            orderItem.setNumberOfOccupiedSeats(orderItem.getNumberOfOccupiedSeats() + 1);
+                            orderItem.addJoinedUser(FirebaseAuth.getInstance().getUid());
+                            FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
+                        } else {
+                            Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
+                        }
                     }else{
-                        Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
+                        orderItem.setNumberOfOccupiedSeats(orderItem.getNumberOfOccupiedSeats() - 1);
+                        orderItem.removeJoinedUser(FirebaseAuth.getInstance().getUid());
+                        FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
                     }
                 }
+
+                getFragmentManager().popBackStackImmediate();
             }
         });
 
@@ -140,7 +148,7 @@ public class OrderDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.order_details_submit_menu_item:
-                if(setNewData()) {
+                if (setNewData()) {
                     updateDatabase();
                     getActivity().getFragmentManager().popBackStackImmediate();
                 }
@@ -158,7 +166,7 @@ public class OrderDetailsFragment extends Fragment {
             orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
             Log.i(TAG, "setNewData: after \n" + orderItem.toString());
             return true;
-        }else{
+        } else {
             Snackbar.make(getView(), "Please fill all gaps", Snackbar.LENGTH_LONG).show();
             return false;
         }
@@ -179,10 +187,14 @@ public class OrderDetailsFragment extends Fragment {
         }
     }
 
-    public boolean validate(){
+    public boolean validate() {
         return !placeFromEditText.getText().toString().equals("") && !placeToEditText.getText().toString().equals("")
                 && !dateEditText.getText().toString().equals("") && !descriptionEditText.getText().toString().equals("")
                 && !numberOfSeatsEditText.getText().toString().equals("");
+    }
+
+    public boolean joined(String uid) {
+        return orderItem.getJoinedUsers().contains(uid);
     }
 
 }
