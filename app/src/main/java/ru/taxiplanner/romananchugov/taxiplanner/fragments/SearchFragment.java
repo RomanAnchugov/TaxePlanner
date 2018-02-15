@@ -252,7 +252,8 @@ public class SearchFragment extends Fragment{
             if(item != null) {
                 placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
                 placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
-                dateOfTripTextView.setText(getResources().getString(R.string.order_item_template_date, item.getTime(),item.getDate()));
+                dateOfTripTextView.setText(getResources().getString(R.string.order_item_full_date_template, item.getTime(),
+                        item.getDate()));
             }
         }
 

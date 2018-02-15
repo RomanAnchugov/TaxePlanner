@@ -44,6 +44,13 @@
                 />
             <EditText
                 style="@style/OrderDetailsTextView"
+                android:id="@+id/order_details_time_text_view"
+                />
+            <View
+                style="@style/LightGrayHorizontalLine"
+                />
+            <EditText
+                style="@style/OrderDetailsTextView"
                 android:id="@+id/order_details_description_text_view" />
             <View
                 style="@style/LightGrayHorizontalLine"

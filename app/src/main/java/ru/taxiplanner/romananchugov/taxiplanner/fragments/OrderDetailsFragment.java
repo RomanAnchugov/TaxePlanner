@@ -45,6 +45,7 @@ public class OrderDetailsFragment extends Fragment {
     private EditText placeFromEditText;
     private EditText placeToEditText;
     private EditText dateEditText;
+    private EditText timeEditText;
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
@@ -78,6 +79,7 @@ public class OrderDetailsFragment extends Fragment {
         placeFromEditText = v.findViewById(R.id.order_details_place_from_text_view);
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
         dateEditText = v.findViewById(R.id.order_details_date_text_view);
+        timeEditText = v.findViewById(R.id.order_details_time_text_view);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
@@ -86,7 +88,8 @@ public class OrderDetailsFragment extends Fragment {
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
-        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(), orderItem.getDate()));
+        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
+        timeEditText.setText(getString(R.string.order_item_template_time, orderItem.getTime()));
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
         numberOfSeatsEditText.setText(
                 getString(R.string.order_item_template_number_seats,
@@ -106,7 +109,9 @@ public class OrderDetailsFragment extends Fragment {
 
                 if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
                     dateEditText.setEnabled(true);
-                    dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getTime(), orderItem.getDate()));
+                    dateEditText.setText(orderItem.getDate());
+                    timeEditText.setEnabled(true);
+                    timeEditText.setText(orderItem.getTime());
                     descriptionEditText.setEnabled(true);
                     descriptionEditText.setText(orderItem.getDescription());
                     numberOfSeatsEditText.setEnabled(true);
@@ -134,9 +139,8 @@ public class OrderDetailsFragment extends Fragment {
                         orderItem.removeJoinedUser(FirebaseAuth.getInstance().getUid());
                         FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
                     }
+                    getFragmentManager().popBackStackImmediate();
                 }
-
-                getFragmentManager().popBackStackImmediate();
             }
         });
 
@@ -159,9 +163,11 @@ public class OrderDetailsFragment extends Fragment {
     public boolean setNewData() {
         if (orderItem != null && validate()) {
             Log.i(TAG, "setNewData: before \n" + orderItem.toString());
+
             orderItem.setPlaceFrom(placeFromEditText.getText().toString());
             orderItem.setPlaceTo(placeToEditText.getText().toString());
             orderItem.setDate(dateEditText.getText().toString());
+            orderItem.setTime(timeEditText.getText().toString());
             orderItem.setDescription(descriptionEditText.getText().toString());
             orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
             Log.i(TAG, "setNewData: after \n" + orderItem.toString());
