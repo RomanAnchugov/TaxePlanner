@@ -29,6 +29,8 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
@@ -40,10 +42,6 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
 
     //TODO: information about user
-    //TODO: nav drawer(logout, personal inf, tasks, etc.)
-    //TODO: action for floating button
-    //TODO firebase database
-    //TODO: etc.
 public class SearchFragment extends Fragment{
     private static final String TAG = "SearchFragment";
 
@@ -90,9 +88,6 @@ public class SearchFragment extends Fragment{
 //        }
 //        myRef.setValue(orders);
 
-
-        //TODO: add progress bar while loading database
-        //TODO: sort by date in recycler
         //if some on orders changed and after first loading
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -100,8 +95,7 @@ public class SearchFragment extends Fragment{
                 GenericTypeIndicator<ArrayList<OrderItem>> generic = new GenericTypeIndicator<ArrayList<OrderItem>>() {};//type indicator
 
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
-
-                orders = list;
+                Collections.sort(list, new OrderItemsComparator());
 
                 //validation of deleted orders
                 for(int i = 0; i < orders.size(); i++){
@@ -288,6 +282,34 @@ public class SearchFragment extends Fragment{
         @Override
         public int getItemCount() {
             return ordersWithSearch.size();
+        }
+    }
+
+    private class OrderItemsComparator implements Comparator<OrderItem>{
+
+        @Override
+        public int compare(OrderItem orderItem, OrderItem t1) {
+            if(orderItem.getYear() == t1.getYear()){
+                if(orderItem.getMonth() == t1.getMonth()){
+                    if(orderItem.getDay() == t1.getDay()){
+                        if(orderItem.getHour() == t1.getHour()){
+                            if(orderItem.getMinutes() == t1.getMinutes()){
+                                return 0;
+                            }else{
+                                return orderItem.getMinutes() > t1.getMinutes() ? 1 : -1;
+                            }
+                        }else{
+                            return orderItem.getHour() > t1.getHour() ? 1 : -1;
+                        }
+                    }else{
+                        return orderItem.getDay() > t1.getDay() ? 1 : -1;
+                    }
+                }else{
+                    return orderItem.getMonth() > t1.getMonth() ? 1 : -1;
+                }
+            }else{
+                return orderItem.getYear() > t1.getYear() ? 1 : -1;
+            }
         }
     }
 
