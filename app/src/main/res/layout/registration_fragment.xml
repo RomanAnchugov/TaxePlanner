@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/RegistrationTextView"
+                android:text="@string/name" />
+
+            <EditText
+                style="@style/RegistrationEditText"
+                android:hint="@string/your_name" />
+
+            <TextView
+                style="@style/RegistrationTextView"
+                android:text="@string/surname" />
+
+            <EditText
+                style="@style/RegistrationEditText"
+                android:hint="@string/your_surname" />
+
+            <TextView
+                style="@style/RegistrationTextView"
+                android:text="@string/phone_number" />
+
+            <EditText
+                style="@style/RegistrationEditText"
+                android:hint="@string/your_phone_number"
+                android:inputType="phone" />
+
+            <TextView
+                style="@style/RegistrationTextView"
+                android:text="@string/email" />
+
+            <EditText
+                style="@style/RegistrationEditText"
+                android:hint="@string/your_email"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                style="@style/RegistrationTextView"
+                android:text="@string/password" />
+
+            <EditText
+                style="@style/RegistrationEditText"
+                android:hint="@string/enter_your_password"
+                android:inputType="textPassword" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/register"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -62,13 +62,15 @@ public class StarterFragment extends Fragment {
         registrationButton.setOnClickListener(new View.OnClickListener() {
             //TODO: different fragment for registration with name
             @Override
+
             public void onClick(View view) {
-                if(isValidInput()) {
-                    createAccount(userEmail.getText().toString(), userPassword.getText().toString());
-                    progressBar.setVisibility(View.VISIBLE);
-                }else{
-                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
-                }
+//                if(isValidInput()) {
+//                    createAccount(userEmail.getText().toString(), userPassword.getText().toString());
+//                    progressBar.setVisibility(View.VISIBLE);
+//                }else{
+//                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+//                }
+                goToFragment(new RegistrationFragment());
             }
         });
         loginButton = v.findViewById(R.id.user_login_button);
@@ -163,6 +165,13 @@ public class StarterFragment extends Fragment {
         FragmentTransaction transaction = manager.beginTransaction();
         SearchFragment fragment = new SearchFragment();
         transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
+    }
+    public void goToFragment(Fragment fragment){
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
     }
     public boolean isValidInput(){
