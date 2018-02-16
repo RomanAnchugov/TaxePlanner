@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,18 +61,27 @@ public class StarterFragment extends Fragment {
         registrationButton = v.findViewById(R.id.user_registration_button);
         progressBar = v.findViewById(R.id.starter_fragment_progress_bar);
         registrationButton.setOnClickListener(new View.OnClickListener() {
+            //TODO: different fragment for registration with name
             @Override
             public void onClick(View view) {
-                createAccount(userEmail.getText().toString(), userPassword.getText().toString());
-                progressBar.setVisibility(View.VISIBLE);
+                if(isValidInput()) {
+                    createAccount(userEmail.getText().toString(), userPassword.getText().toString());
+                    progressBar.setVisibility(View.VISIBLE);
+                }else{
+                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         loginButton = v.findViewById(R.id.user_login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn(userEmail.getText().toString(), userPassword.getText().toString());
-                progressBar.setVisibility(View.VISIBLE);
+                if(isValidInput()) {
+                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
+                    progressBar.setVisibility(View.VISIBLE);
+                }else{
+                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         return v;
@@ -130,7 +140,6 @@ public class StarterFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success -> checking for verification");
-                            FirebaseUser user = mAuth.getCurrentUser();
 
                             //checking for verify email
                             if(!mAuth.getCurrentUser().isEmailVerified()){
@@ -156,5 +165,10 @@ public class StarterFragment extends Fragment {
         SearchFragment fragment = new SearchFragment();
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
+    }
+    public boolean isValidInput(){
+        //TODO: regular expression for checking email
+        //TODO: check password length
+        return !userEmail.getText().toString().equals("") && !userPassword.getText().toString().equals("");
     }
 }
