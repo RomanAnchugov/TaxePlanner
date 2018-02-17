@@ -2,6 +2,7 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -11,11 +12,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 /**
  * Created by romananchugov on 16.02.2018.
@@ -33,6 +43,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private RadioButton registrationVerifyPhone;
     private RadioButton registrationVerifyEmail;
     private Button registrationSubmitButton;
+
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Nullable
     @Override
@@ -61,6 +73,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             case R.id.registration_submit_button:
                 if(isValid()) {
                     Log.i(TAG, "onClick: registration submit button");
+                    if(registrationVerifyEmail.isChecked()){
+                        createAccountEmail(registrationEmail.getText().toString(), registrationPassword.getText().toString());
+                    }
                 }
         }
     }
@@ -87,5 +102,45 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             Snackbar.make(getView(), R.string.fill_all_gaps, Snackbar.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    private void createAccountEmail(String userEmail, String userPassword){
+        mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            final String name = registrationName.getText().toString();
+                            final String surname = registrationSurname.getText().toString();
+                            final String phoneNumber = registrationPhoneNumber.getText().toString();
+
+                            //sending verification email
+                            user.sendEmailVerification().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        UserItem userItem = new UserItem(name, surname, phoneNumber);
+                                        FirebaseDatabase.getInstance().getReference("users/" + mAuth.getUid()).setValue(userItem);
+                                        Log.i(TAG, "Send verification email: successful");
+                                        Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
+
+                                        getFragmentManager().popBackStackImmediate();
+                                    }else{
+                                        Log.i(TAG, "Send verification email: failed");
+                                        Toast.makeText(getActivity(), "Some problem, try again", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

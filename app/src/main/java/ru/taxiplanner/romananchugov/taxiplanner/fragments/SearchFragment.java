@@ -97,6 +97,8 @@ public class SearchFragment extends Fragment{
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
                 Collections.sort(list, new OrderItemsComparator());
 
+                orders = list;
+
                 //validation of deleted orders
                 for(int i = 0; i < orders.size(); i++){
                     if(orders.get(i) == null){
@@ -218,6 +220,9 @@ public class SearchFragment extends Fragment{
         });
 
         progressBar = v.findViewById(R.id.search_fragment_progress_bar);
+        if(orders.size() == 0){
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         return v;
     }
@@ -237,7 +242,7 @@ public class SearchFragment extends Fragment{
                 @Override
                 public void onClick(View view) {
                     Log.i(TAG, "onClick: yea, it works!!!");
-                    goToOrderDetailsFragment(getAdapterPosition());
+                    goToOrderDetailsFragment(getAdapterPosition(), orders.get(getAdapterPosition()));
                 }
             });
 
@@ -321,11 +326,11 @@ public class SearchFragment extends Fragment{
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
     }
-    public void goToOrderDetailsFragment(int position){
+    public void goToOrderDetailsFragment(int position, OrderItem order){
         //TODO: animation for opening fragment from this element(radial transformation)
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        OrderDetailsFragment fragment = new OrderDetailsFragment(orders, position);
+        OrderDetailsFragment fragment = new OrderDetailsFragment(position, order);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();

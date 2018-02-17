@@ -21,10 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
-import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 import static ru.taxiplanner.romananchugov.taxiplanner.MainActivity.goToFragment;
 
@@ -95,45 +93,12 @@ public class StarterFragment extends Fragment {
         super.onStart();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        if(currentUser != null && currentUser.isEmailVerified()){
             goToSearchFragment();
         }
     }
 
-    private void createAccount(String userEmail, String userPassword){
-        mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressBar.setVisibility(View.GONE);
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
 
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-                            //sending verification email
-                            user.sendEmailVerification().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        UserItem userItem = new UserItem("TestName", "TestSurname", "TestPhone");
-                                        FirebaseDatabase.getInstance().getReference("users/" + mAuth.getUid()).setValue(userItem);
-                                        Log.i(TAG, "Send verification email: successful");
-                                        Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
-                                    }else{
-                                        Log.i(TAG, "Send verification email: failed");
-                                        Toast.makeText(getActivity(), "Some problem, try again", Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-                        } else {
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
     private void signIn(String userEmail, String userPassword){
         mAuth.signInWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {

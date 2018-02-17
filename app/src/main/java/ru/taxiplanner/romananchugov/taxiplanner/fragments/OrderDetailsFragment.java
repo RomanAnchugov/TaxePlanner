@@ -23,8 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.List;
-
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
@@ -38,7 +36,6 @@ public class OrderDetailsFragment extends Fragment {
 
     private final String TAG = "OrderDetailsFragment";
 
-    private List<OrderItem> orders;
     private int position;
     private OrderItem orderItem;
 
@@ -52,8 +49,8 @@ public class OrderDetailsFragment extends Fragment {
 
     private Menu menu;
 
-    public OrderDetailsFragment(List<OrderItem> orders, int position) {
-        this.orders = orders;
+    public OrderDetailsFragment(int position, OrderItem order) {
+        this.orderItem = order;
         this.position = position;
     }
 
@@ -84,7 +81,6 @@ public class OrderDetailsFragment extends Fragment {
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
 
-        orderItem = orders.get(position);
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
