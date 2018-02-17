@@ -18,6 +18,7 @@
                 android:text="@string/name" />
 
             <EditText
+                android:id="@+id/registration_name_edit_text"
                 style="@style/RegistrationEditText"
                 android:hint="@string/your_name" />
 
@@ -26,6 +27,7 @@
                 android:text="@string/surname" />
 
             <EditText
+                android:id="@+id/registration_surname_edit_text"
                 style="@style/RegistrationEditText"
                 android:hint="@string/your_surname" />
 
@@ -34,6 +36,7 @@
                 android:text="@string/phone_number" />
 
             <EditText
+                android:id="@+id/registration_phone_number_edit_text"
                 style="@style/RegistrationEditText"
                 android:hint="@string/your_phone_number"
                 android:inputType="phone" />
@@ -43,6 +46,7 @@
                 android:text="@string/email" />
 
             <EditText
+                android:id="@+id/registration_email_edit_text"
                 style="@style/RegistrationEditText"
                 android:hint="@string/your_email"
                 android:inputType="textEmailAddress" />
@@ -52,11 +56,28 @@
                 android:text="@string/password" />
 
             <EditText
+                android:id="@+id/registration_password_edit_text"
                 style="@style/RegistrationEditText"
                 android:hint="@string/enter_your_password"
                 android:inputType="textPassword" />
 
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/registration_verify_number_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/verify_by_phone_number"/>
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/registration_verify_email_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/verify_by_email"/>
+            </RadioGroup>
+
             <Button
+                android:id="@+id/registration_submit_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/register"
