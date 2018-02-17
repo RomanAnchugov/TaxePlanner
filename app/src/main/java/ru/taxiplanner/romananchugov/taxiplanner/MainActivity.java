@@ -1,5 +1,7 @@
 package ru.taxiplanner.romananchugov.taxiplanner;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -28,5 +30,13 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         getFragmentManager().popBackStackImmediate();
+    }
+
+    public static void goToFragment(Fragment fragment, Activity activity){
+        FragmentManager manager = activity.getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        transaction.commit();
     }
 }

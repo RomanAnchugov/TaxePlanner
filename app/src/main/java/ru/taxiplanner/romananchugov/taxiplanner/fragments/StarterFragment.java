@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
+import static ru.taxiplanner.romananchugov.taxiplanner.MainActivity.goToFragment;
+
 /**
  * Created by romananchugov on 28.12.2017.
  */
@@ -70,7 +72,7 @@ public class StarterFragment extends Fragment {
 //                }else{
 //                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
 //                }
-                goToFragment(new RegistrationFragment());
+                goToFragment(new RegistrationFragment(), getActivity());
             }
         });
         loginButton = v.findViewById(R.id.user_login_button);
@@ -165,13 +167,6 @@ public class StarterFragment extends Fragment {
         FragmentTransaction transaction = manager.beginTransaction();
         SearchFragment fragment = new SearchFragment();
         transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
-    }
-    public void goToFragment(Fragment fragment){
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
     }
     public boolean isValidInput(){
