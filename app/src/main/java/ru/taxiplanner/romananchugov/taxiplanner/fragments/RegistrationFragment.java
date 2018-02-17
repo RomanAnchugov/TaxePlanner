@@ -3,6 +3,7 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,9 @@ import ru.taxiplanner.romananchugov.taxiplanner.R;
  * Created by romananchugov on 16.02.2018.
  */
 
-public class RegistrationFragment extends Fragment {
+public class RegistrationFragment extends Fragment implements View.OnClickListener {
 
+    private final String TAG = "RegistrationFragment";
 
     private EditText registrationName;
     private EditText registrationSurname;
@@ -30,6 +32,7 @@ public class RegistrationFragment extends Fragment {
 
     @Nullable
     @Override
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.registration_fragment, container, false);
 
@@ -42,6 +45,16 @@ public class RegistrationFragment extends Fragment {
         registrationVerifyEmail = v.findViewById(R.id.registration_verify_email_radio_button);
         registrationSubmitButton = v.findViewById(R.id.registration_submit_button);
 
+        registrationSubmitButton.setOnClickListener(this);
+
         return v;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.registration_submit_button:
+                Log.i(TAG, "onClick: registration submit button");
+        }
     }
 }

@@ -44,5 +44,6 @@
     <string name="register">Register</string>
     <string name="verify_by_email">Verify by email</string>
     <string name="verify_by_phone_number">Verify by phone number</string>
+    <string name="submit">Submit</string>
 
 </resources>
