@@ -16,11 +16,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +79,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                     Log.i(TAG, "onClick: registration submit button");
                     if(registrationVerifyEmail.isChecked()){
                         createAccountEmail(registrationEmail.getText().toString(), registrationPassword.getText().toString());
+                    }else if(registrationVerifyPhone.isChecked()){
+                        createAccountPhone(registrationEmail.getText().toString(), registrationPassword.getText().toString());
                     }
                 }
         }
@@ -140,6 +146,29 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
+    }
+    private void createAccountPhone(String userEmail, String userPassword){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                registrationPhoneNumber.getText().toString(),
+                60,
+                TimeUnit.SECONDS,
+                getActivity(),
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                        Log.i(TAG, "onVerificationCompleted: ");
+                    }
+
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        Log.i(TAG, "onVerificationFailed: " + e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        Log.i(TAG, "onCodeSent: verification code was send");
                     }
                 });
     }
