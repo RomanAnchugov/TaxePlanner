@@ -33,11 +33,15 @@ public class MainActivity extends AppCompatActivity {
         getFragmentManager().popBackStackImmediate();
     }
 
-    public static void goToFragment(Fragment fragment, Activity activity){
+    public static void goToFragment(Fragment fragment, Activity activity, boolean addToBack){
         FragmentManager manager = activity.getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        if(addToBack) {
+            transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        }else{
+            transaction.replace(R.id.fragment_container, fragment);
+        }
         transaction.commit();
     }
 }

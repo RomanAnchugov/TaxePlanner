@@ -70,7 +70,7 @@ public class StarterFragment extends Fragment {
 //                }else{
 //                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
 //                }
-                goToFragment(new RegistrationFragment(), getActivity());
+                goToFragment(new RegistrationFragment(), getActivity(), true);
             }
         });
         loginButton = v.findViewById(R.id.user_login_button);
@@ -93,7 +93,8 @@ public class StarterFragment extends Fragment {
         super.onStart();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null && currentUser.isEmailVerified()){
+        if(currentUser != null && (currentUser.isEmailVerified() || !currentUser.getPhoneNumber().equals(""))){
+            //Log.i(TAG, "onStart: null auth " + currentUser.getPhoneNumber());
             goToSearchFragment();
         }
     }
