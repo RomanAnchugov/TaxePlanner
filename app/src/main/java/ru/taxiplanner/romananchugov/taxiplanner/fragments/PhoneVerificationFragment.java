@@ -18,8 +18,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
@@ -71,35 +69,25 @@ public class PhoneVerificationFragment extends Fragment {
                         mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithCredential:success");
+                                if(task.isSuccessful()){
+                                    Log.i(TAG, "Send verification email: successful");
 
-                                    FirebaseUser user = task.getResult().getUser();
+                                    FirebaseDatabase
+                                            .getInstance()
+                                            .getReference("users/" + mAuth.getUid())
+                                            .setValue(userItem);
 
-                                } else {
-                                    // Sign in failed, display a message and update the UI
-                                    Log.w(TAG, "signInWithCredential:failure", task.getException());
-                                    if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                        // The verification code entered was invalid
+                                    FragmentManager fm = getActivity().getFragmentManager();
+                                    for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                                        fm.popBackStack();
                                     }
+
+                                    MainActivity.goToFragment(new SearchFragment(), getActivity(), false);
+                                }else{
+                                    Log.i(TAG, "onComplete: some problems " + task.getException().getLocalizedMessage());
                                 }
                             }
                         });
-
-                        FirebaseDatabase
-                                .getInstance()
-                                .getReference("users/" + mAuth.getUid())
-                                .setValue(userItem);
-
-                        Log.i(TAG, "Send verification email: successful");
-
-                        //getFragmentManager().popBackStackImmediate();
-                        FragmentManager fm = getActivity().getFragmentManager();
-                        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                            fm.popBackStack();
-                        }
-                        MainActivity.goToFragment(new SearchFragment(), getActivity(), false);
                     }
 
                     @Override
@@ -112,7 +100,7 @@ public class PhoneVerificationFragment extends Fragment {
                     public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         Log.i(TAG, "onCodeSent: verification code was send " + s);
                         Toast.makeText(getActivity(), "We have send you sms", Toast.LENGTH_LONG).show();
-                        //MainActivity.goToFragment(new PhoneVerificationFragment(), getActivity());
+                        //TODO: handle code input
                     }
                 });
 
