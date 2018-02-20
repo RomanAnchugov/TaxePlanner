@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
@@ -33,12 +36,18 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
  */
 
 @SuppressLint("ValidFragment")
-public class PhoneVerificationFragment extends Fragment {
+public class PhoneVerificationFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = "PhoneVerFragment";
 
     private UserItem userItem;
     private FirebaseAuth mAuth;
+
+    private String verId = null;
+    private PhoneAuthProvider.ForceResendingToken tokenVer;
+
+    private Button button;
+    private EditText editText;
 
     public PhoneVerificationFragment(UserItem userItem){
         this.userItem = userItem;
@@ -50,6 +59,12 @@ public class PhoneVerificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.phone_verification_fragment, container, false);
         Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
+
+        button = v.findViewById(R.id.phone_verification_submit_button);
+        button.setOnClickListener(this);
+
+        editText = v.findViewById(R.id.phone_verification_edit_text);
+
         createAccountPhone();
         return v;
     }
@@ -65,44 +80,69 @@ public class PhoneVerificationFragment extends Fragment {
                     @Override
                     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                         Log.i(TAG, "onVerificationCompleted: ");
-
-                        mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    Log.i(TAG, "Send verification email: successful");
-
-                                    FirebaseDatabase
-                                            .getInstance()
-                                            .getReference("users/" + mAuth.getUid())
-                                            .setValue(userItem);
-
-                                    FragmentManager fm = getActivity().getFragmentManager();
-                                    for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                                        fm.popBackStack();
-                                    }
-
-                                    MainActivity.goToFragment(new SearchFragment(), getActivity(), false);
-                                }else{
-                                    Log.i(TAG, "onComplete: some problems " + task.getException().getLocalizedMessage());
-                                }
-                            }
-                        });
+                        signInWithPhoneCredentials(phoneAuthCredential);
                     }
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
                         Log.i(TAG, "onVerificationFailed: " + e.getLocalizedMessage());
-                        Snackbar.make(getView(), "Some problem, with sms, try with email", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(getView(), "Some problem, with sms, try again later or with email", Snackbar.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                    public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken token) {
                         Log.i(TAG, "onCodeSent: verification code was send " + s);
                         Toast.makeText(getActivity(), "We have send you sms", Toast.LENGTH_LONG).show();
-                        //TODO: handle code input
+
+                        tokenVer = token;
+                        verId = s;
                     }
                 });
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        //TODO: tests for it
+        if(verId != null && editText.getText().toString().length() == 6) {
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verId, editText.getText().toString());
+            signInWithPhoneCredentials(credential);
+        }else{
+            Snackbar.make(getView(), "Please enter the code", Snackbar.LENGTH_SHORT);
+            Log.i(TAG, "onClick: ");
+        }
+    }
+
+    public void signInWithPhoneCredentials(PhoneAuthCredential credential){
+
+        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if(task.isSuccessful()){
+                    Log.i(TAG, "Send verification email: successful- > sigIn");
+
+                    FirebaseDatabase
+                            .getInstance()
+                            .getReference("users/" + mAuth.getUid())
+                            .setValue(userItem);
+
+                    FragmentManager fm = getActivity().getFragmentManager();
+                    for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                        fm.popBackStack();
+                    }
+
+                    MainActivity.goToFragment(new SearchFragment(), getActivity(), false);
+                }
+                else{
+                    Log.i(TAG, "onComplete: some problems " + task.getException().getLocalizedMessage());
+
+                    if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                        Log.i(TAG, "onComplete: invalid verification code");
+                        Snackbar.make(getView(), "Wrong code, try again", Snackbar.LENGTH_SHORT);
+                    }
+                }
+            }
+        });
     }
 }

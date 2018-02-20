@@ -5,11 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <EditText
+        android:id="@+id/phone_verification_edit_text"
         android:inputType="number"
+        android:maxLength="6"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
+        android:id="@+id/phone_verification_submit_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/submit"/>
