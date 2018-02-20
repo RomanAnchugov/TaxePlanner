@@ -120,7 +120,7 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if(task.isSuccessful()){
-                    Log.i(TAG, "Send verification email: successful- > sigIn");
+                    Log.i(TAG, "signInWithPhoneCredentials: onComplete: successful- > sigIn");
 
                     FirebaseDatabase
                             .getInstance()
@@ -139,7 +139,7 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
 
                     if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                         Log.i(TAG, "onComplete: invalid verification code");
-                        Snackbar.make(getView(), "Wrong code, try again", Snackbar.LENGTH_SHORT);
+                        Snackbar.make(getView(), "Wrong code, try again", Snackbar.LENGTH_SHORT).show();
                     }
                 }
             }

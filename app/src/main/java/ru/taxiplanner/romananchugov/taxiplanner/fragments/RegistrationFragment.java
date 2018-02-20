@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,6 +97,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         String email = registrationEmail.getText().toString();
         Pattern p = Pattern.compile("\\b[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(email);
+
         if(!registrationEmail.getText().toString().equals("")
                 && !registrationName.getText().toString().equals("")
                 && !registrationSurname.getText().toString().equals("")
@@ -103,7 +105,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 && !registrationPassword.getText().toString().equals("")){
             if(registrationPassword.getText().toString().length() >= 6){
                 if(m.find()){
-                    return true;
+                    if(isPhoneNumberValid()) {
+                        return true;
+                    }
                 }else{
                     Snackbar.make(getView(), "Incorrect email", Snackbar.LENGTH_SHORT).show();
                 }
@@ -154,6 +158,18 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                         }
                     }
                 });
+    }
+    private boolean isPhoneNumberValid(){
+        String number = registrationPhoneNumber.getText().toString();
+        if(PhoneNumberUtils.isGlobalPhoneNumber(number)
+                && number.length() == 12
+                && number.charAt(0) == '+'
+                && number.charAt(1) == '7'){
+            return true;
+        }else{
+            Snackbar.make(getView(), "Invalid phone number", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
     }
 
 }
