@@ -62,6 +62,7 @@
                 android:inputType="textPassword" />
 
             <RadioGroup
+                android:id="@+id/registration_radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <RadioButton

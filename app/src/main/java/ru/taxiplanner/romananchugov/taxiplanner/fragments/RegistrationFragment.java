@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,7 +34,7 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
  * Created by romananchugov on 16.02.2018.
  */
 
-public class RegistrationFragment extends Fragment implements View.OnClickListener {
+public class RegistrationFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private final String TAG = "RegistrationFragment";
 
@@ -44,6 +45,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private EditText registrationPhoneNumber;
     private EditText registrationEmail;
     private EditText registrationPassword;
+    private RadioGroup verificationRadioGroup;
     private RadioButton registrationVerifyPhone;
     private RadioButton registrationVerifyEmail;
     private Button registrationSubmitButton;
@@ -61,9 +63,14 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         registrationPhoneNumber = v.findViewById(R.id.registration_phone_number_edit_text);
         registrationEmail = v.findViewById(R.id.registration_email_edit_text);
         registrationPassword = v.findViewById(R.id.registration_password_edit_text);
+
+        verificationRadioGroup = v.findViewById(R.id.registration_radio_group);
+        verificationRadioGroup.setOnCheckedChangeListener(this);
+
         registrationVerifyPhone = v.findViewById(R.id.registration_verify_number_radio_button);
         registrationVerifyPhone.setChecked(true);
         registrationVerifyEmail = v.findViewById(R.id.registration_verify_email_radio_button);
+
         registrationSubmitButton = v.findViewById(R.id.registration_submit_button);
 
         registrationSubmitButton.setOnClickListener(this);
@@ -98,13 +105,13 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         Pattern p = Pattern.compile("\\b[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(email);
 
-        if(!registrationEmail.getText().toString().equals("")
+        if((!registrationEmail.getText().toString().equals("") || !registrationEmail.isEnabled())
                 && !registrationName.getText().toString().equals("")
                 && !registrationSurname.getText().toString().equals("")
                 && !registrationPhoneNumber.getText().toString().equals("")
-                && !registrationPassword.getText().toString().equals("")){
-            if(registrationPassword.getText().toString().length() >= 6){
-                if(m.find()){
+                && (!registrationPassword.getText().toString().equals("") || !registrationPassword.isEnabled())){
+            if((registrationPassword.getText().toString().length() >= 6 || !registrationPassword.isEnabled())){
+                if((m.find() || !registrationEmail.isEnabled())){
                     if(isPhoneNumberValid()) {
                         return true;
                     }
@@ -172,4 +179,21 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int id) {
+        RadioButton radioButton = radioGroup.findViewById(id);
+        if(radioButton.isChecked()){
+            switch (id){
+                case R.id.registration_verify_number_radio_button:
+                    registrationEmail.setEnabled(false);
+                    registrationPassword.setEnabled(false);
+                    break;
+                case R.id.registration_verify_email_radio_button:
+                    registrationEmail.setEnabled(true);
+                    registrationPassword.setEnabled(true);
+            }
+        }
+
+
+    }
 }
