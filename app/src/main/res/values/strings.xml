@@ -2,8 +2,8 @@
     <string name="app_name">TaxiPlanner</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="enter_your_password">Enter your password</string>
-    <string name="registration">Registration</string>
-    <string name="login">Login</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sig_in">Sig in</string>
     <string name="from">From</string>
     <string name="to">To</string>
 
@@ -45,5 +45,6 @@
     <string name="verify_by_email">Verify by email</string>
     <string name="verify_by_phone_number">Verify by phone number</string>
     <string name="submit">Submit</string>
+    <string name="or">OR</string>
 
 </resources>
