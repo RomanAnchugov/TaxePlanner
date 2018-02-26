@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:orientation="vertical"
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -39,10 +40,11 @@
                 android:gravity="center"/>
 
             <EditText
-                android:id="@+id/registration_sig_in_phone_number_edit_text"
+                android:id="@+id/sig_in_phone_number_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/your_phone_number"/>
+                android:hint="@string/your_phone_number"
+                android:inputType="phone" />
 
             <Button
                 android:id="@+id/user_login_button"

@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +20,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 import static ru.taxiplanner.romananchugov.taxiplanner.MainActivity.goToFragment;
 
@@ -40,6 +49,7 @@ public class StarterFragment extends Fragment {
 
     private EditText userEmail;
     private EditText userPassword;
+    private EditText userPhoneNumber;
     private Button registrationButton;
     private Button loginButton;
     private ProgressBar progressBar;
@@ -57,6 +67,7 @@ public class StarterFragment extends Fragment {
         View v = inflater.inflate(R.layout.starter_fragment, container, false);
         userEmail = v.findViewById(R.id.user_email_edit_text);
         userPassword = v.findViewById(R.id.user_password_edit_text);
+        userPhoneNumber = v.findViewById(R.id.sig_in_phone_number_edit_text);
         registrationButton = v.findViewById(R.id.user_registration_button);
         progressBar = v.findViewById(R.id.starter_fragment_progress_bar);
         registrationButton.setOnClickListener(new View.OnClickListener() {
@@ -77,12 +88,14 @@ public class StarterFragment extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isValidInput()) {
-                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
-                    progressBar.setVisibility(View.VISIBLE);
-                }else{
-                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
-                }
+//                if(isValidInput()) {
+//                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
+//                    progressBar.setVisibility(View.VISIBLE);
+//                }else{
+//                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+//                }
+                String phoneNumber = userPhoneNumber.getText().toString();
+                checkExistence();
             }
         });
         return v;
@@ -99,6 +112,12 @@ public class StarterFragment extends Fragment {
         }
     }
 
+    //TODO: implemented phone sigIn
+    //- handle focusing on this edit text
+    //- validate phone number onClick sigIn button
+    //- check existence of account with such number in db
+    //- send verification sms(the same implementation as in phoneVerificationFragment)
+    // i think we can again use this fragment
 
     private void signIn(String userEmail, String userPassword){
         mAuth.signInWithEmailAndPassword(userEmail, userPassword)
@@ -139,5 +158,23 @@ public class StarterFragment extends Fragment {
         //TODO: regular expression for checking email
         //TODO: check password length
         return !userEmail.getText().toString().equals("") && !userPassword.getText().toString().equals("");
+    }
+
+    public void checkExistence(String phoneNumber){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<ArrayList<UserItem>> generic = new GenericTypeIndicator<ArrayList<UserItem>>() {};//type indicator
+
+                ArrayList<UserItem> list = dataSnapshot.getValue(generic);
+                //TODO: search of given number
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        })
     }
 }
