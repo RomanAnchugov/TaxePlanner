@@ -27,10 +27,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
+import ru.taxiplanner.romananchugov.taxiplanner.MainActivity;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
-import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 import static ru.taxiplanner.romananchugov.taxiplanner.MainActivity.goToFragment;
@@ -71,20 +71,16 @@ public class StarterFragment extends Fragment {
         registrationButton = v.findViewById(R.id.user_registration_button);
         progressBar = v.findViewById(R.id.starter_fragment_progress_bar);
         registrationButton.setOnClickListener(new View.OnClickListener() {
-            //TODO: different fragment for registration with name
             @Override
-
             public void onClick(View view) {
-//                if(isValidInput()) {
-//                    createAccount(userEmail.getText().toString(), userPassword.getText().toString());
-//                    progressBar.setVisibility(View.VISIBLE);
-//                }else{
-//                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
-//                }
                 goToFragment(new RegistrationFragment(), getActivity(), true);
             }
         });
         loginButton = v.findViewById(R.id.user_login_button);
+
+        //TODO: implemented phone sigIn with email sigIn
+        //- handle focusing on this edit text
+        //- validate phone number onClick sigIn button
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +91,7 @@ public class StarterFragment extends Fragment {
 //                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
 //                }
                 String phoneNumber = userPhoneNumber.getText().toString();
-                checkExistence();
+                checkExistence(phoneNumber);
             }
         });
         return v;
@@ -107,17 +103,9 @@ public class StarterFragment extends Fragment {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null && (currentUser.isEmailVerified() || !currentUser.getPhoneNumber().equals(""))){
-            //Log.i(TAG, "onStart: null auth " + currentUser.getPhoneNumber());
             goToSearchFragment();
         }
     }
-
-    //TODO: implemented phone sigIn
-    //- handle focusing on this edit text
-    //- validate phone number onClick sigIn button
-    //- check existence of account with such number in db
-    //- send verification sms(the same implementation as in phoneVerificationFragment)
-    // i think we can again use this fragment
 
     private void signIn(String userEmail, String userPassword){
         mAuth.signInWithEmailAndPassword(userEmail, userPassword)
@@ -160,21 +148,30 @@ public class StarterFragment extends Fragment {
         return !userEmail.getText().toString().equals("") && !userPassword.getText().toString().equals("");
     }
 
-    public void checkExistence(String phoneNumber){
+    public void checkExistence(final String phoneNumber){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<ArrayList<UserItem>> generic = new GenericTypeIndicator<ArrayList<UserItem>>() {};//type indicator
+                GenericTypeIndicator<HashMap<String, UserItem>> generic = new GenericTypeIndicator<HashMap<String, UserItem>>(){};//type indicator
 
-                ArrayList<UserItem> list = dataSnapshot.getValue(generic);
-                //TODO: search of given number
+                HashMap<String, UserItem> list = dataSnapshot.getValue(generic);
+                for(HashMap.Entry<String, UserItem> entry: list.entrySet()){
+                    UserItem userItem = entry.getValue();
+                    if(userItem.getPhoneNumber().equals(phoneNumber)){
+                        Log.i(TAG, "onDataChange: we have found this number in database");
+                        Fragment fragment = new PhoneVerificationFragment(userItem);
+                        MainActivity.goToFragment(fragment, getActivity(), true);
+                        return;
+                    }
+                }
+                Log.i(TAG, "onDataChange: we didn't found number in database");
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        })
+        });
     }
 }

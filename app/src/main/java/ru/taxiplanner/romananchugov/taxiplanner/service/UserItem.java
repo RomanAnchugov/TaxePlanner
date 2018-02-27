@@ -14,6 +14,9 @@ public class UserItem {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
     }
+    public UserItem(){
+
+    }
 
     public String getName() {
         return name;
