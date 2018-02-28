@@ -46,5 +46,6 @@
     <string name="verify_by_phone_number">Verify by phone number</string>
     <string name="submit">Submit</string>
     <string name="or">OR</string>
+    <string name="profile">Profile</string>
 
 </resources>

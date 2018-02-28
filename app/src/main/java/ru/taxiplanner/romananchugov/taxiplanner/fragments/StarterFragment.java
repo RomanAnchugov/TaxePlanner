@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +39,6 @@ import static ru.taxiplanner.romananchugov.taxiplanner.MainActivity.goToFragment
 /**
  * Created by romananchugov on 28.12.2017.
  */
-
-    //TODO: login through google
-
 public class StarterFragment extends Fragment {
 
     public static final String TAG = "StarterFragment";
@@ -90,6 +88,7 @@ public class StarterFragment extends Fragment {
 //                }else{
 //                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
 //                }
+                progressBar.setVisibility(View.VISIBLE);
                 String phoneNumber = userPhoneNumber.getText().toString();
                 checkExistence(phoneNumber);
             }
@@ -102,7 +101,9 @@ public class StarterFragment extends Fragment {
         super.onStart();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null && (currentUser.isEmailVerified() || !currentUser.getPhoneNumber().equals(""))){
+        if(currentUser != null
+                && (currentUser.isEmailVerified()
+                || (currentUser.getPhoneNumber() != null && !currentUser.getPhoneNumber().equals("")))){
             goToSearchFragment();
         }
     }
@@ -142,6 +143,7 @@ public class StarterFragment extends Fragment {
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
+
     public boolean isValidInput(){
         //TODO: regular expression for checking email
         //TODO: check password length
@@ -153,6 +155,7 @@ public class StarterFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                progressBar.setVisibility(View.GONE);
                 GenericTypeIndicator<HashMap<String, UserItem>> generic = new GenericTypeIndicator<HashMap<String, UserItem>>(){};//type indicator
 
                 HashMap<String, UserItem> list = dataSnapshot.getValue(generic);
@@ -166,6 +169,7 @@ public class StarterFragment extends Fragment {
                     }
                 }
                 Log.i(TAG, "onDataChange: we didn't found number in database");
+                Snackbar.make(getView(), "You have to sign up", Snackbar.LENGTH_LONG).show();
             }
 
             @Override
