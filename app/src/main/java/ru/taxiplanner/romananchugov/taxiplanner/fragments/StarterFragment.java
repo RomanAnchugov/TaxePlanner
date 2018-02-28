@@ -82,15 +82,15 @@ public class StarterFragment extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(isValidInput()) {
-//                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
-//                    progressBar.setVisibility(View.VISIBLE);
-//                }else{
-//                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
-//                }
-                progressBar.setVisibility(View.VISIBLE);
-                String phoneNumber = userPhoneNumber.getText().toString();
-                checkExistence(phoneNumber);
+                if(isValidInput()) {
+                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
+                    progressBar.setVisibility(View.VISIBLE);
+                }else{
+                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+                }
+//                progressBar.setVisibility(View.VISIBLE);
+//                String phoneNumber = userPhoneNumber.getText().toString();
+//                checkExistence(phoneNumber);
             }
         });
         return v;
