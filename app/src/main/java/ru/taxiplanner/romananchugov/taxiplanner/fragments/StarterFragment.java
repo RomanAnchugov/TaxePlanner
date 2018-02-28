@@ -76,7 +76,7 @@ public class StarterFragment extends Fragment {
         });
         loginButton = v.findViewById(R.id.user_login_button);
 
-        //TODO: implemented phone sigIn with email sigIn
+        //TODO: implemented phone sigIn and email sigIn
         //- handle focusing on this edit text
         //- validate phone number onClick sigIn button
         loginButton.setOnClickListener(new View.OnClickListener() {

@@ -41,4 +41,9 @@ public class UserItem {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    @Override
+    public String toString() {
+        return name + "\n" + surname + "\n" + phoneNumber;
+    }
 }
