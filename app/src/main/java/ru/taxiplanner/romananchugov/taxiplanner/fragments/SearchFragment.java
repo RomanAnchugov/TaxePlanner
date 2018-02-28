@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ru.taxiplanner.romananchugov.taxiplanner.MainActivity;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
@@ -350,6 +351,10 @@ public class SearchFragment extends Fragment{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(TAG, "onOptionsItemSelected: user settings button pressed");
+
+        Fragment userSettingsFragment = new UserSettingsFragment();
+        MainActivity.goToFragment(userSettingsFragment, getActivity(), true);
+
         return false;
     }
 }
