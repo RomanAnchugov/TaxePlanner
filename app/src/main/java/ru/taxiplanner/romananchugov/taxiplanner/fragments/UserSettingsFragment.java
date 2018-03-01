@@ -47,6 +47,10 @@ public class UserSettingsFragment extends Fragment {
         userSurname = v.findViewById(R.id.user_settings_surname_edit_text);
         phoneNumber = v.findViewById(R.id.user_settings_phone_number_edit_text);
 
+        userSurname.setEnabled(false);
+        userName.setEnabled(false);
+        phoneNumber.setEnabled(false);
+
         getUser();
         return v;
     }
