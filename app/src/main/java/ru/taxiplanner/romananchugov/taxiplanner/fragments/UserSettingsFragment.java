@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,12 +32,21 @@ public class UserSettingsFragment extends Fragment {
 
     TextView textView;
 
+    EditText userName;
+    EditText userSurname;
+    EditText phoneNumber;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.user_settings_fragment, container, false);
         textView = v.findViewById(R.id.text_view);
         uId = FirebaseAuth.getInstance().getUid();
+
+        userName = v.findViewById(R.id.user_settings_name_edit_text);
+        userSurname = v.findViewById(R.id.user_settings_surname_edit_text);
+        phoneNumber = v.findViewById(R.id.user_settings_phone_number_edit_text);
+
         getUser();
         return v;
     }
@@ -51,6 +61,10 @@ public class UserSettingsFragment extends Fragment {
                 UserItem  userItem = dataSnapshot.getValue(generic);
                 Log.i(TAG, "onDataChange: " + userItem.toString());
                 textView.setText(userItem.toString());
+
+                userName.setText(userItem.getName());
+                userSurname.setText(userItem.getSurname());
+                phoneNumber.setText(userItem.getPhoneNumber());
             }
 
             @Override
