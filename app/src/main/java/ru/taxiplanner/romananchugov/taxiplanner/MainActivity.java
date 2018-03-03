@@ -44,4 +44,10 @@ public class MainActivity extends AppCompatActivity {
         }
         transaction.commit();
     }
+    public static void clearBackStack(Activity activity){
+        FragmentManager fm = activity.getFragmentManager();
+        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+            fm.popBackStack();
+        }
+    }
 }

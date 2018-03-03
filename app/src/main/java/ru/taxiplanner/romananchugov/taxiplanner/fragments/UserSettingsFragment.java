@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import ru.taxiplanner.romananchugov.taxiplanner.MainActivity;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
@@ -25,16 +27,17 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
  * Created by romananchugov on 28.02.2018.
  */
 
-public class UserSettingsFragment extends Fragment {
+public class UserSettingsFragment extends Fragment{
     private static final String TAG = "UserSettingsFragment";
 
     private String uId;
 
     TextView textView;
 
-    EditText userName;
-    EditText userSurname;
-    EditText phoneNumber;
+    private EditText userName;
+    private EditText userSurname;
+    private EditText phoneNumber;
+    private Button logoutButton;
 
     @Nullable
     @Override
@@ -46,6 +49,16 @@ public class UserSettingsFragment extends Fragment {
         userName = v.findViewById(R.id.user_settings_name_edit_text);
         userSurname = v.findViewById(R.id.user_settings_surname_edit_text);
         phoneNumber = v.findViewById(R.id.user_settings_phone_number_edit_text);
+        logoutButton = v.findViewById(R.id.log_out_button);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                MainActivity.clearBackStack(getActivity());
+                MainActivity.goToFragment(new StarterFragment(), getActivity(), false);
+            }
+        });
+
 
         userSurname.setEnabled(false);
         userName.setEnabled(false);
