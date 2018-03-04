@@ -18,13 +18,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
+import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 /**
  * Created by romananchugov on 12.02.2018.
@@ -46,6 +54,7 @@ public class OrderDetailsFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
+    private TextView joinedUsersTextView;
 
     private Menu menu;
 
@@ -80,6 +89,11 @@ public class OrderDetailsFragment extends Fragment {
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
+        joinedUsersTextView = v.findViewById(R.id.joined_users_text_view);
+
+        if(orderItem.getJoinedUsers().size()>0) {
+            getJoinedUsers(orderItem.getJoinedUsers());
+        }
 
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
@@ -198,6 +212,27 @@ public class OrderDetailsFragment extends Fragment {
 
     public boolean joined(String uid) {
         return orderItem.getJoinedUsers().contains(uid);
+    }
+
+    private void getJoinedUsers(ArrayList<String> joinedUsers){
+        for(String uId: joinedUsers) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users/" + uId);
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    GenericTypeIndicator<UserItem> generic = new GenericTypeIndicator<UserItem>() {};//type indicator
+
+                    UserItem userItem = dataSnapshot.getValue(generic);
+                    Log.i(TAG, "onDataChange: got a joined user - " + userItem.getName());
+                    joinedUsersTextView.setText(joinedUsersTextView.getText().toString() + "\n" +userItem.getName());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
 }
