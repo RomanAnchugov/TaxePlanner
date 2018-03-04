@@ -48,5 +48,6 @@
     <string name="or">OR</string>
     <string name="profile">Profile</string>
     <string name="logout">logout</string>
+    <string name="edit">edit</string>
 
 </resources>
