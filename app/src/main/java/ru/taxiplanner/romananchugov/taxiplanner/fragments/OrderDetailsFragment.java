@@ -16,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +57,7 @@ public class OrderDetailsFragment extends Fragment {
     private EditText numberOfSeatsEditText;
     private Button functionButton;
     private TextView joinedUsersTextView;
+    private ExpandableListView joinedUsersExpandList;
 
     private Menu menu;
 
@@ -90,6 +93,9 @@ public class OrderDetailsFragment extends Fragment {
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
         joinedUsersTextView = v.findViewById(R.id.joined_users_text_view);
+        joinedUsersExpandList = v.findViewById(R.id.joined_users_expand_list);
+        joinedUsersExpandList.setAdapter(new ExpandableListAdapter());
+
 
         if(orderItem.getJoinedUsers().size()>0) {
             getJoinedUsers(orderItem.getJoinedUsers());
@@ -232,6 +238,80 @@ public class OrderDetailsFragment extends Fragment {
 
                 }
             });
+        }
+    }
+
+    private class ExpandableListAdapter extends BaseExpandableListAdapter{
+        ArrayList<ArrayList<String>> testArray = new ArrayList<>();
+
+        public ExpandableListAdapter(){
+            ArrayList<String> array1 = new ArrayList<>();
+            array1.add("Child1");
+            array1.add("child2");
+            ArrayList<String> array2 = new ArrayList<>();
+            array2.add("Child1");
+            array2.add("Child2");
+            testArray.add(array1);
+            testArray.add(array2);
+        }
+
+
+        @Override
+        public int getGroupCount() {
+            return testArray.size();
+        }
+
+        @Override
+        public int getChildrenCount(int i) {
+            return testArray.get(i).size();
+        }
+
+        @Override
+        public Object getGroup(int i) {
+            return testArray.get(i);
+        }
+
+        @Override
+        public Object getChild(int i, int i1) {
+            return testArray.get(i).get(i1);
+        }
+
+        @Override
+        public long getGroupId(int i) {
+            return i;
+        }
+
+        @Override
+        public long getChildId(int i, int i1) {
+            return i1;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
+        @Override
+        public View getGroupView(int i, boolean b, View convertView, ViewGroup viewGroup) {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.group_view, null);
+            }
+            return convertView;
+        }
+
+        @Override
+        public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup viewGroup) {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.child_view, null);
+            }
+            return convertView;
+        }
+
+        @Override
+        public boolean isChildSelectable(int i, int i1) {
+            return true;
         }
     }
 
