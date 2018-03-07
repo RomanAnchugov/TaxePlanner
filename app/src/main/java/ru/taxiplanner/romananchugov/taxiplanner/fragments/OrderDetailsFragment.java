@@ -56,8 +56,11 @@ public class OrderDetailsFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
-    private TextView joinedUsersTextView;
+    //private TextView joinedUsersTextView;
     private ExpandableListView joinedUsersExpandList;
+    private ExpandableListAdapter expandableListAdapter;
+
+    private ArrayList<ArrayList<String>> mJoinedUsers;
 
     private Menu menu;
 
@@ -92,9 +95,14 @@ public class OrderDetailsFragment extends Fragment {
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
-        joinedUsersTextView = v.findViewById(R.id.joined_users_text_view);
+        //joinedUsersTextView = v.findViewById(R.id.joined_users_text_view);
+
+        mJoinedUsers = new ArrayList<>();
+        ArrayList<String> arrayList = new ArrayList<>();
+        mJoinedUsers.add(arrayList);
         joinedUsersExpandList = v.findViewById(R.id.joined_users_expand_list);
-        joinedUsersExpandList.setAdapter(new ExpandableListAdapter());
+        expandableListAdapter = new ExpandableListAdapter();
+        joinedUsersExpandList.setAdapter(expandableListAdapter);
 
 
         if(orderItem.getJoinedUsers().size()>0) {
@@ -220,7 +228,7 @@ public class OrderDetailsFragment extends Fragment {
         return orderItem.getJoinedUsers().contains(uid);
     }
 
-    private void getJoinedUsers(ArrayList<String> joinedUsers){
+    private void getJoinedUsers(final ArrayList<String> joinedUsers){
         for(String uId: joinedUsers) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users/" + uId);
             ref.addValueEventListener(new ValueEventListener() {
@@ -230,7 +238,9 @@ public class OrderDetailsFragment extends Fragment {
 
                     UserItem userItem = dataSnapshot.getValue(generic);
                     Log.i(TAG, "onDataChange: got a joined user - " + userItem.getName());
-                    joinedUsersTextView.setText(joinedUsersTextView.getText().toString() + "\n" +userItem.getName());
+                    //joinedUsersTextView.setText(joinedUsersTextView.getText().toString() + "\n" +userItem.getName());
+                    mJoinedUsers.get(0).add(userItem.getName());
+                    expandableListAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -242,38 +252,27 @@ public class OrderDetailsFragment extends Fragment {
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter{
-        ArrayList<ArrayList<String>> testArray = new ArrayList<>();
 
-        public ExpandableListAdapter(){
-            ArrayList<String> array1 = new ArrayList<>();
-            array1.add("Child1");
-            array1.add("child2");
-            ArrayList<String> array2 = new ArrayList<>();
-            array2.add("Child1");
-            array2.add("Child2");
-            testArray.add(array1);
-            testArray.add(array2);
-        }
 
 
         @Override
         public int getGroupCount() {
-            return testArray.size();
+            return mJoinedUsers.size();
         }
 
         @Override
         public int getChildrenCount(int i) {
-            return testArray.get(i).size();
+            return mJoinedUsers.get(i).size();
         }
 
         @Override
         public Object getGroup(int i) {
-            return testArray.get(i);
+            return mJoinedUsers.get(i);
         }
 
         @Override
         public Object getChild(int i, int i1) {
-            return testArray.get(i).get(i1);
+            return mJoinedUsers.get(i).get(i1);
         }
 
         @Override
@@ -305,7 +304,10 @@ public class OrderDetailsFragment extends Fragment {
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.child_view, null);
+
             }
+            TextView textView = convertView.findViewById(R.id.textChild);
+            textView.setText(mJoinedUsers.get(i).get(i1));
             return convertView;
         }
 
