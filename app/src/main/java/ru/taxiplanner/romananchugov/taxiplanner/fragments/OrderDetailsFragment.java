@@ -16,10 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,11 +55,7 @@ public class OrderDetailsFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
-    //private TextView joinedUsersTextView;
-    private ExpandableListView joinedUsersExpandList;
-    private ExpandableListAdapter expandableListAdapter;
-
-    private ArrayList<ArrayList<String>> mJoinedUsers;
+    private LinearLayout linearLayout;
 
     private Menu menu;
 
@@ -88,6 +83,7 @@ public class OrderDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.order_details_fragment, container, false);
 
+        linearLayout = v.findViewById(R.id.order_details_linear_layout);
         placeFromEditText = v.findViewById(R.id.order_details_place_from_text_view);
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
         dateEditText = v.findViewById(R.id.order_details_date_text_view);
@@ -95,14 +91,6 @@ public class OrderDetailsFragment extends Fragment {
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
-        //joinedUsersTextView = v.findViewById(R.id.joined_users_text_view);
-
-        mJoinedUsers = new ArrayList<>();
-        ArrayList<String> arrayList = new ArrayList<>();
-        mJoinedUsers.add(arrayList);
-        joinedUsersExpandList = v.findViewById(R.id.joined_users_expand_list);
-        expandableListAdapter = new ExpandableListAdapter();
-        joinedUsersExpandList.setAdapter(expandableListAdapter);
 
 
         if(orderItem.getJoinedUsers().size()>0) {
@@ -239,8 +227,11 @@ public class OrderDetailsFragment extends Fragment {
                     UserItem userItem = dataSnapshot.getValue(generic);
                     Log.i(TAG, "onDataChange: got a joined user - " + userItem.getName());
                     //joinedUsersTextView.setText(joinedUsersTextView.getText().toString() + "\n" +userItem.getName());
-                    mJoinedUsers.get(0).add(userItem.getName());
-                    expandableListAdapter.notifyDataSetChanged();
+                    View view = getActivity().getLayoutInflater().inflate(R.layout.order_details_joined_user_view,
+                            null, false);
+                    TextView textView = view.findViewById(R.id.joined_user_text_view);
+                    textView.setText(userItem.getName());
+                    linearLayout.addView(view);
                 }
 
                 @Override
@@ -251,70 +242,7 @@ public class OrderDetailsFragment extends Fragment {
         }
     }
 
-    private class ExpandableListAdapter extends BaseExpandableListAdapter{
-
-
-
-        @Override
-        public int getGroupCount() {
-            return mJoinedUsers.size();
-        }
-
-        @Override
-        public int getChildrenCount(int i) {
-            return mJoinedUsers.get(i).size();
-        }
-
-        @Override
-        public Object getGroup(int i) {
-            return mJoinedUsers.get(i);
-        }
-
-        @Override
-        public Object getChild(int i, int i1) {
-            return mJoinedUsers.get(i).get(i1);
-        }
-
-        @Override
-        public long getGroupId(int i) {
-            return i;
-        }
-
-        @Override
-        public long getChildId(int i, int i1) {
-            return i1;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public View getGroupView(int i, boolean b, View convertView, ViewGroup viewGroup) {
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.group_view, null);
-            }
-            return convertView;
-        }
-
-        @Override
-        public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup viewGroup) {
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.child_view, null);
-
-            }
-            TextView textView = convertView.findViewById(R.id.textChild);
-            textView.setText(mJoinedUsers.get(i).get(i1));
-            return convertView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int i, int i1) {
-            return true;
-        }
-    }
-
 }
+
+
+

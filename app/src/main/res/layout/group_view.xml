@@ -4,12 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:id="@+id/textGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="20dp"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        />
+        style="@style/OrderDetailsTextView"
+        android:id="@+id/expand_group_text_view"
+        android:paddingLeft="30dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="0dp"
+        android:paddingRight="0dp" />
 </LinearLayout>
