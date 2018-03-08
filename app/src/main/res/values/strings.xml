@@ -50,6 +50,6 @@
     <string name="logout">logout</string>
     <string name="edit">edit</string>
     <string name="call">Call</string>
-    <string name="joined_users">Joined Users</string>
+    <string name="joined_users">Joined Users(%1$d)</string>
 
 </resources>

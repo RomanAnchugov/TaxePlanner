@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +56,8 @@ public class OrderDetailsFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
+    private TextView joinedUsersHeader;
+    private ProgressBar progressBar;
     private LinearLayout linearLayout;
 
     private Menu menu;
@@ -90,12 +93,15 @@ public class OrderDetailsFragment extends Fragment {
         timeEditText = v.findViewById(R.id.order_details_time_text_view);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
+        progressBar = v.findViewById(R.id.order_details_progress_bar);
+        joinedUsersHeader = v.findViewById(R.id.joined_user_header_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
 
 
         if(orderItem.getJoinedUsers().size()>0) {
             getJoinedUsers(orderItem.getJoinedUsers());
         }
+        joinedUsersHeader.setText(getString(R.string.joined_users, orderItem.getJoinedUsers().size()));
 
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
@@ -217,6 +223,8 @@ public class OrderDetailsFragment extends Fragment {
     }
 
     private void getJoinedUsers(final ArrayList<String> joinedUsers){
+        Log.i(TAG, "getJoinedUsers: progress. joined users size - " + joinedUsers.size());
+        progressBar.setVisibility(View.VISIBLE);
         for(String uId: joinedUsers) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users/" + uId);
             ref.addValueEventListener(new ValueEventListener() {
@@ -232,6 +240,7 @@ public class OrderDetailsFragment extends Fragment {
                     TextView textView = view.findViewById(R.id.joined_user_text_view);
                     textView.setText(userItem.getName());
                     linearLayout.addView(view);
+                    progressBar.setVisibility(View.GONE);
                 }
 
                 @Override
