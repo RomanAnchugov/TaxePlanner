@@ -22,7 +22,8 @@
             android:id="@+id/order_details_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="15dp">
 
             <EditText
                 android:id="@+id/order_details_place_from_text_view"
@@ -66,12 +67,14 @@
             <TextView
                 android:id="@+id/joined_user_header_text_view"
                 android:text="@string/joined_users"
+                android:layout_weight="1"
                 style="@style/OrderDetailsTextView" />
             <ProgressBar
                 android:id="@+id/order_details_progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"/>
+                android:layout_weight="1"
+                android:visibility="visible"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

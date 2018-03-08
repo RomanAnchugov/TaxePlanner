@@ -215,6 +215,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
                     //check internet connection
                     if(activeNetwork != null) {
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders/" + orders.size());
+                        orderItem.getJoinedUsers().add(FirebaseAuth.getInstance().getUid());
                         ref.setValue(orderItem);
 
                         getActivity().getFragmentManager().popBackStackImmediate();

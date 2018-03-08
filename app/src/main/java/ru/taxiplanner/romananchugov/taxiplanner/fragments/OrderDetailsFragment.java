@@ -224,7 +224,9 @@ public class OrderDetailsFragment extends Fragment {
 
     private void getJoinedUsers(final ArrayList<String> joinedUsers){
         Log.i(TAG, "getJoinedUsers: progress. joined users size - " + joinedUsers.size());
-        progressBar.setVisibility(View.VISIBLE);
+        if(progressBar.getVisibility() == View.GONE) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         for(String uId: joinedUsers) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users/" + uId);
             ref.addValueEventListener(new ValueEventListener() {
@@ -238,7 +240,7 @@ public class OrderDetailsFragment extends Fragment {
                     View view = getActivity().getLayoutInflater().inflate(R.layout.order_details_joined_user_view,
                             null, false);
                     TextView textView = view.findViewById(R.id.joined_user_text_view);
-                    textView.setText(userItem.getName());
+                    textView.setText(getString(R.string.joined_users_placeholder, userItem.getName(), userItem.getSurname()));
                     linearLayout.addView(view);
                     progressBar.setVisibility(View.GONE);
                 }
