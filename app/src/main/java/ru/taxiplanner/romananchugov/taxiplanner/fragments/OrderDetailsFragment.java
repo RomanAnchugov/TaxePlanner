@@ -4,8 +4,10 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -234,13 +237,24 @@ public class OrderDetailsFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     GenericTypeIndicator<UserItem> generic = new GenericTypeIndicator<UserItem>() {};//type indicator
 
-                    UserItem userItem = dataSnapshot.getValue(generic);
+                    final UserItem userItem = dataSnapshot.getValue(generic);
                     Log.i(TAG, "onDataChange: got a joined user - " + userItem.getName());
                     //joinedUsersTextView.setText(joinedUsersTextView.getText().toString() + "\n" +userItem.getName());
                     View view = getActivity().getLayoutInflater().inflate(R.layout.order_details_joined_user_view,
                             null, false);
                     TextView textView = view.findViewById(R.id.joined_user_text_view);
                     textView.setText(getString(R.string.joined_users_placeholder, userItem.getName(), userItem.getSurname()));
+
+                    ImageButton button = view.findViewById(R.id.joined_user_phone_button);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.i(TAG, "onClick: join user phone button");
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + userItem.getPhoneNumber()));
+                            startActivity(intent);
+                        }
+                    });
                     linearLayout.addView(view);
                     progressBar.setVisibility(View.GONE);
                 }
