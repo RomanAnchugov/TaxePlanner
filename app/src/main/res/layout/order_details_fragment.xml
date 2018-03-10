@@ -58,7 +58,7 @@
 
             <View style="@style/LightGrayHorizontalLine" />
 
-            <EditText
+            <TextView
                 android:id="@+id/order_details_number_of_seats_text_view"
                 style="@style/OrderDetailsTextView" />
 

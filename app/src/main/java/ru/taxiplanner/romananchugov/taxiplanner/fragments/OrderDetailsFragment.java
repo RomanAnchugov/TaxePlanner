@@ -2,6 +2,7 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.NumberOfSeatsDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
@@ -51,6 +53,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
 
     private final String TAG = "OrderDetailsFragment";
 
+    private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
+
     private int position;
     private OrderItem orderItem;
 
@@ -59,7 +63,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     private TextView dateTextView;
     private TextView timeTextView;
     private EditText descriptionEditText;
-    private EditText numberOfSeatsEditText;
+    private TextView numberOfSeatsTextView;
     private Button functionButton;
     private TextView joinedUsersHeader;
     private ProgressBar progressBar;
@@ -99,7 +103,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         timeTextView = v.findViewById(R.id.order_details_time_text_view);
         timeTextView.setOnClickListener(this);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
-        numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
+        numberOfSeatsTextView = v.findViewById(R.id.order_details_number_of_seats_text_view);
+        numberOfSeatsTextView.setOnClickListener(this);
         progressBar = v.findViewById(R.id.order_details_progress_bar);
         joinedUsersHeader = v.findViewById(R.id.joined_user_header_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
@@ -116,7 +121,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         dateTextView.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
         timeTextView.setText(getString(R.string.order_item_template_time, orderItem.getTime()));
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
-        numberOfSeatsEditText.setText(
+        numberOfSeatsTextView.setText(
                 getString(R.string.order_item_template_number_seats,
                         orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats())
         );
@@ -140,8 +145,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     timeTextView.setText(orderItem.getTime());
                     descriptionEditText.setEnabled(true);
                     descriptionEditText.setText(orderItem.getDescription());
-                    numberOfSeatsEditText.setEnabled(true);
-                    numberOfSeatsEditText.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats() + "");
+                    numberOfSeatsTextView.setEnabled(true);
+                    numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats() + "");
                     placeFromEditText.setEnabled(true);
                     placeFromEditText.setText(orderItem.getPlaceFrom());
                     placeToEditText.setEnabled(true);
@@ -195,7 +200,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
             orderItem.setDate(dateTextView.getText().toString());
             orderItem.setTime(timeTextView.getText().toString());
             orderItem.setDescription(descriptionEditText.getText().toString());
-            orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
+            orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsTextView.getText().toString()));
             Log.i(TAG, "setNewData: after \n" + orderItem.toString());
             return true;
         } else {
@@ -222,7 +227,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     public boolean validate() {
         return !placeFromEditText.getText().toString().equals("") && !placeToEditText.getText().toString().equals("")
                 && !dateTextView.getText().toString().equals("") && !descriptionEditText.getText().toString().equals("")
-                && !numberOfSeatsEditText.getText().toString().equals("");
+                && !numberOfSeatsTextView.getText().toString().equals("");
     }
 
     public boolean joined(String uid) {
@@ -282,7 +287,33 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     Log.i(TAG, "onClick: order details time picker click");
                     new TimePickerDialogFragment(orderItem, timeTextView).show(getFragmentManager(), "time picker");
                     break;
+                case R.id.order_details_number_of_seats_text_view:
+                    Log.i(TAG, "onClick: order details number of seats picker click");
+                    Bundle args1 = new Bundle();
+                    args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, numberOfSeatsTextView.getText().toString());
+                    NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment();
+                    numberOfSeatsDialogFragment.setArguments(args1);
+                    numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
+                    numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");
+                    break;
             }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case REQUEST_CODE_FOR_NUMBER_OF_SEATS:
+                if(resultCode == Activity.RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    String numberOfSeats = bundle.getString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, "fuck");
+                    orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeats));
+                    Log.i(TAG, "onActivityResult: " + numberOfSeats);
+                    numberOfSeatsTextView.setText(numberOfSeats);
+                }
+                break;
+        }
     }
 }
 
