@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
@@ -56,7 +57,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     private EditText placeFromEditText;
     private EditText placeToEditText;
     private TextView dateTextView;
-    private EditText timeEditText;
+    private TextView timeTextView;
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
     private Button functionButton;
@@ -95,7 +96,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
         dateTextView = v.findViewById(R.id.order_details_date_text_view);
         dateTextView.setOnClickListener(this);
-        timeEditText = v.findViewById(R.id.order_details_time_text_view);
+        timeTextView = v.findViewById(R.id.order_details_time_text_view);
+        timeTextView.setOnClickListener(this);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
         progressBar = v.findViewById(R.id.order_details_progress_bar);
@@ -112,7 +114,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
         dateTextView.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
-        timeEditText.setText(getString(R.string.order_item_template_time, orderItem.getTime()));
+        timeTextView.setText(getString(R.string.order_item_template_time, orderItem.getTime()));
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
         numberOfSeatsEditText.setText(
                 getString(R.string.order_item_template_number_seats,
@@ -134,8 +136,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     //TODO: remade editing with dialogs
                    dateTextView.setEnabled(true);
                    dateTextView.setText(orderItem.getDate());
-                    timeEditText.setEnabled(true);
-                    timeEditText.setText(orderItem.getTime());
+                    timeTextView.setEnabled(true);
+                    timeTextView.setText(orderItem.getTime());
                     descriptionEditText.setEnabled(true);
                     descriptionEditText.setText(orderItem.getDescription());
                     numberOfSeatsEditText.setEnabled(true);
@@ -191,7 +193,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
             orderItem.setPlaceFrom(placeFromEditText.getText().toString());
             orderItem.setPlaceTo(placeToEditText.getText().toString());
             orderItem.setDate(dateTextView.getText().toString());
-            orderItem.setTime(timeEditText.getText().toString());
+            orderItem.setTime(timeTextView.getText().toString());
             orderItem.setDescription(descriptionEditText.getText().toString());
             orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
             Log.i(TAG, "setNewData: after \n" + orderItem.toString());
@@ -271,11 +273,14 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        Log.i(TAG, "onClick: click");
             switch (view.getId()){
                 case R.id.order_details_date_text_view:
                     Log.i(TAG, "onClick: order details date picker click");
                     new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
+                    break;
+                case R.id.order_details_time_text_view:
+                    Log.i(TAG, "onClick: order details time picker click");
+                    new TimePickerDialogFragment(orderItem, timeTextView).show(getFragmentManager(), "time picker");
                     break;
             }
     }
