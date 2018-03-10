@@ -36,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
@@ -45,7 +46,7 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 @SuppressLint("ValidFragment")
 
-public class OrderDetailsFragment extends Fragment {
+public class OrderDetailsFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = "OrderDetailsFragment";
 
@@ -54,7 +55,7 @@ public class OrderDetailsFragment extends Fragment {
 
     private EditText placeFromEditText;
     private EditText placeToEditText;
-    private EditText dateEditText;
+    private TextView dateTextView;
     private EditText timeEditText;
     private EditText descriptionEditText;
     private EditText numberOfSeatsEditText;
@@ -92,7 +93,8 @@ public class OrderDetailsFragment extends Fragment {
         linearLayout = v.findViewById(R.id.order_details_linear_layout);
         placeFromEditText = v.findViewById(R.id.order_details_place_from_text_view);
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
-        dateEditText = v.findViewById(R.id.order_details_date_text_view);
+        dateTextView = v.findViewById(R.id.order_details_date_text_view);
+        dateTextView.setOnClickListener(this);
         timeEditText = v.findViewById(R.id.order_details_time_text_view);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsEditText = v.findViewById(R.id.order_details_number_of_seats_text_view);
@@ -109,7 +111,7 @@ public class OrderDetailsFragment extends Fragment {
 
         placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
         placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
-        dateEditText.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
+        dateTextView.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
         timeEditText.setText(getString(R.string.order_item_template_time, orderItem.getTime()));
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
         numberOfSeatsEditText.setText(
@@ -130,8 +132,8 @@ public class OrderDetailsFragment extends Fragment {
 
                 if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
                     //TODO: remade editing with dialogs
-                    dateEditText.setEnabled(true);
-                    dateEditText.setText(orderItem.getDate());
+                   dateTextView.setEnabled(true);
+                   dateTextView.setText(orderItem.getDate());
                     timeEditText.setEnabled(true);
                     timeEditText.setText(orderItem.getTime());
                     descriptionEditText.setEnabled(true);
@@ -188,7 +190,7 @@ public class OrderDetailsFragment extends Fragment {
 
             orderItem.setPlaceFrom(placeFromEditText.getText().toString());
             orderItem.setPlaceTo(placeToEditText.getText().toString());
-            orderItem.setDate(dateEditText.getText().toString());
+            orderItem.setDate(dateTextView.getText().toString());
             orderItem.setTime(timeEditText.getText().toString());
             orderItem.setDescription(descriptionEditText.getText().toString());
             orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeatsEditText.getText().toString()));
@@ -217,7 +219,7 @@ public class OrderDetailsFragment extends Fragment {
 
     public boolean validate() {
         return !placeFromEditText.getText().toString().equals("") && !placeToEditText.getText().toString().equals("")
-                && !dateEditText.getText().toString().equals("") && !descriptionEditText.getText().toString().equals("")
+                && !dateTextView.getText().toString().equals("") && !descriptionEditText.getText().toString().equals("")
                 && !numberOfSeatsEditText.getText().toString().equals("");
     }
 
@@ -267,6 +269,16 @@ public class OrderDetailsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        Log.i(TAG, "onClick: click");
+            switch (view.getId()){
+                case R.id.order_details_date_text_view:
+                    Log.i(TAG, "onClick: order details date picker click");
+                    new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
+                    break;
+            }
+    }
 }
 
 
