@@ -60,7 +60,8 @@
 
             <TextView
                 android:id="@+id/order_details_number_of_seats_text_view"
-                style="@style/OrderDetailsTextView" />
+                style="@style/OrderDetailsTextView"
+                android:background="?android:attr/selectableItemBackground"/>
 
             <View style="@style/LightGrayHorizontalLine" />
             <LinearLayout

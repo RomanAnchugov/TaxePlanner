@@ -1,5 +1,6 @@
 package ru.taxiplanner.romananchugov.taxiplanner.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,11 +13,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
 /**
  * Created by romananchugov on 28.01.2018.
  */
 
+@SuppressLint("ValidFragment")
 public class NumberOfSeatsDialogFragment extends DialogFragment {
     public static final String EXTRA_NUMBER_OF_SEATS_TAG = "NumberOfSeats";
     private static final String TAG = "NumberOfSeatsDialog";
@@ -24,11 +27,18 @@ public class NumberOfSeatsDialogFragment extends DialogFragment {
     private TextView textView;
     private SeekBar seekBar;
 
+    private OrderItem orderItem;
+
+    public NumberOfSeatsDialogFragment(OrderItem orderItem){
+        this.orderItem = orderItem;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        View v = getActivity().getLayoutInflater().inflate(R.layout.new_order_number_of_seats, null);
+        final View v = getActivity().getLayoutInflater().inflate(R.layout.new_order_number_of_seats, null);
+
 
         seekBar = (SeekBar) v.findViewById(R.id.new_order_number_of_seats_seek_bar);
         textView = (TextView) v.findViewById(R.id.new_order_number_of_seats_text_view);
@@ -36,6 +46,10 @@ public class NumberOfSeatsDialogFragment extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 textView.setText(i+"");
+                if(i < orderItem.getNumberOfOccupiedSeats()){
+                    seekBar.setProgress(orderItem.getNumberOfOccupiedSeats());
+                    textView.setText(orderItem.getNumberOfOccupiedSeats() + "");
+                }
             }
 
             @Override

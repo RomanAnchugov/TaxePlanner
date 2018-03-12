@@ -149,7 +149,7 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
 
                 Bundle args1 = new Bundle();
                 args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, orderNumberOfSeatsStatus.getText().toString());
-                NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment();
+                NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment(orderItem);
                 numberOfSeatsDialogFragment.setArguments(args1);
                 numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
                 numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");

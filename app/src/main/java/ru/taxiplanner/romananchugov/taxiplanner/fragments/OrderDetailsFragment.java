@@ -291,7 +291,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     Log.i(TAG, "onClick: order details number of seats picker click");
                     Bundle args1 = new Bundle();
                     args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, numberOfSeatsTextView.getText().toString());
-                    NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment();
+                    NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment(orderItem);
                     numberOfSeatsDialogFragment.setArguments(args1);
                     numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
                     numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");
