@@ -123,7 +123,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
         numberOfSeatsTextView.setText(
                 getString(R.string.order_item_template_number_seats,
-                        orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats())
+                        orderItem.getNumberOfSeatsInCar() - orderItem.getJoinedUsers().size())
         );
         functionButton.setText(
                 FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId()) ? "Edit"
@@ -146,7 +146,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     descriptionEditText.setEnabled(true);
                     descriptionEditText.setText(orderItem.getDescription());
                     numberOfSeatsTextView.setEnabled(true);
-                    numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getNumberOfOccupiedSeats() + "");
+                    numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() + "");
                     placeFromEditText.setEnabled(true);
                     placeFromEditText.setText(orderItem.getPlaceFrom());
                     placeToEditText.setEnabled(true);
@@ -158,15 +158,13 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     item.setVisible(true);
                 } else {
                     if (!joined(FirebaseAuth.getInstance().getUid())) {
-                        if (orderItem.getNumberOfOccupiedSeats() < orderItem.getNumberOfSeatsInCar()) {
-                            orderItem.setNumberOfOccupiedSeats(orderItem.getNumberOfOccupiedSeats() + 1);
+                        if (orderItem.getJoinedUsers().size() < orderItem.getNumberOfSeatsInCar()) {
                             orderItem.addJoinedUser(FirebaseAuth.getInstance().getUid());
                             FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
                         } else {
                             Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
                         }
                     }else{
-                        orderItem.setNumberOfOccupiedSeats(orderItem.getNumberOfOccupiedSeats() - 1);
                         orderItem.removeJoinedUser(FirebaseAuth.getInstance().getUid());
                         FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
                     }

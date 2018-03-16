@@ -26,7 +26,6 @@ public class OrderItem {
     private String userCreatedId;
 
     private int numberOfSeatsInCar;
-    private int numberOfOccupiedSeats;
 
     private ArrayList<String> joinedUsers;
 
@@ -59,13 +58,6 @@ public class OrderItem {
         joinedUsers = new ArrayList<>();
     }
 
-    public int getNumberOfOccupiedSeats() {
-        return numberOfOccupiedSeats;
-    }
-
-    public void setNumberOfOccupiedSeats(int numberOfOccupiedSeats) {
-        this.numberOfOccupiedSeats = numberOfOccupiedSeats;
-    }
 
     public String getStringForSearch() {
         return stringForSearch;
