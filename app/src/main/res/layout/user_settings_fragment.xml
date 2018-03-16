@@ -16,6 +16,20 @@
         android:id="@+id/user_settings_phone_number_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <TextView
+        style="@style/OrderDetailsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/your_orders"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_setting_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
     <Button
         android:id="@+id/log_out_button"
         android:layout_width="match_parent"

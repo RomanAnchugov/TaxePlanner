@@ -352,7 +352,7 @@ public class SearchFragment extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(TAG, "onOptionsItemSelected: user settings button pressed");
 
-        Fragment userSettingsFragment = new UserSettingsFragment();
+        Fragment userSettingsFragment = new UserSettingsFragment(orders);
         MainActivity.goToFragment(userSettingsFragment, getActivity(), true);
 
         return false;

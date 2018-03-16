@@ -1,5 +1,6 @@
 package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -7,6 +8,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,14 +30,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.taxiplanner.romananchugov.taxiplanner.MainActivity;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 /**
  * Created by romananchugov on 28.02.2018.
  */
 
+@SuppressLint("ValidFragment")
 public class UserSettingsFragment extends Fragment{
     private static final String TAG = "UserSettingsFragment";
 
@@ -43,14 +53,27 @@ public class UserSettingsFragment extends Fragment{
     private EditText phoneNumber;
     private Button logoutButton;
 
+    private RecyclerView recyclerView;
+    private List<OrderItem> orders;
+
     MenuItem submitMenuItem;
     MenuItem editMenuItem;
 
+    public UserSettingsFragment(List<OrderItem> orders){
+        this.orders = new ArrayList<>();
+        this.orders.addAll(orders);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        for(int i = 0; i < orders.size(); i++){
+            if(!orders.get(i).getUserCreatedId().equals(FirebaseAuth.getInstance().getUid())){
+                orders.remove(i);
+                i--;
+            }
+        }
     }
 
     @Nullable
@@ -72,6 +95,9 @@ public class UserSettingsFragment extends Fragment{
                 MainActivity.goToFragment(new StarterFragment(), getActivity(), false);
             }
         });
+        recyclerView = v.findViewById(R.id.user_setting_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(new RecyclerAdapter());
 
 
         userSurname.setEnabled(false);
@@ -176,6 +202,60 @@ public class UserSettingsFragment extends Fragment{
             Log.i(TAG, "updateDatabase: set new value to user " + uId );
         } else {
             Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView placeFromTextView;
+        TextView placeToTextView;
+        TextView dateOfTripTextView;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i(TAG, "onClick: recycler item click");
+                    //goToOrderDetailsFragment(getAdapterPosition(), orders.get(getAdapterPosition()));
+                    MainActivity.goToFragment(new OrderDetailsFragment(getAdapterPosition(), orders.get(getAdapterPosition())),
+                            getActivity(), true);
+                }
+            });
+
+            placeFromTextView = (TextView) itemView.findViewById(R.id.order_item_template_from_text_view);
+            placeToTextView = (TextView) itemView.findViewById(R.id.order_item_template_to_text_view);
+            dateOfTripTextView = (TextView) itemView.findViewById(R.id.order_item_template_date_text_view);
+        }
+        public void onBindViewHolder(int position){
+            OrderItem item = orders.get(position);
+            if(item != null) {
+                placeFromTextView.setText(getResources().getString(R.string.order_item_template_from, item.getPlaceFrom()));
+                placeToTextView.setText(getResources().getString(R.string.order_item_template_to, item.getPlaceTo()));
+                dateOfTripTextView.setText(getResources().getString(R.string.order_item_full_date_template, item.getTime(),
+                        item.getDate()));
+            }
+        }
+    }
+    public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            CardView v = (CardView) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.orders_recycler_item_template, parent, false);//get template for recycler item
+
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            holder.onBindViewHolder(position);
+        }
+
+        @Override
+        public int getItemCount() {
+           return orders.size();
         }
     }
 }
