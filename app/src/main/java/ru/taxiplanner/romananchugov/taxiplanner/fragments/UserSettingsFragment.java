@@ -74,6 +74,7 @@ public class UserSettingsFragment extends Fragment{
                 i--;
             }
         }
+
     }
 
     @Nullable

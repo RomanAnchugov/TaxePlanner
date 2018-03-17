@@ -6,10 +6,13 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MenuItem;
 
 import ru.taxiplanner.romananchugov.taxiplanner.fragments.StarterFragment;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
 
     @Override
@@ -18,7 +21,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        //starte fragment
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        //starter fragment
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         StarterFragment starterFragment = new StarterFragment();
@@ -49,5 +57,16 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
             fm.popBackStack();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                Log.i(TAG, "onOptionsItemSelected: back pressed");
+                getFragmentManager().popBackStackImmediate();
+                break;
+        }
+        return false;
     }
 }
