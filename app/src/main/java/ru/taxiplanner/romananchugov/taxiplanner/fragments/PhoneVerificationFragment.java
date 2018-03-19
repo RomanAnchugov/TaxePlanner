@@ -86,7 +86,7 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
                         Log.i(TAG, "onVerificationFailed: " + e.getLocalizedMessage());
-                        Snackbar.make(getView(), "Some problem, with sms, try again later or with email", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(getView(), "Some problem, with sms, try again later", Snackbar.LENGTH_LONG).show();
                     }
 
                     @Override

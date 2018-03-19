@@ -47,15 +47,25 @@ public class StarterFragment extends Fragment {
 
     private FirebaseAuth mAuth;
 
-    private EditText userEmail;
-    private EditText userPassword;
+//    private EditText userEmail;
+//    private EditText userPassword;
     private EditText userPhoneNumber;
     private Button registrationButton;
     private Button loginButton;
     private ProgressBar progressBar;
 
-    private boolean leftScopeFlag;
-    private boolean rightScopeFlag;
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null
+                && (currentUser.isEmailVerified()
+                || (currentUser.getPhoneNumber() != null
+                && !currentUser.getPhoneNumber().equals("")))){
+            goToSearchFragment();
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,8 +78,8 @@ public class StarterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.starter_fragment, container, false);
-        userEmail = v.findViewById(R.id.user_email_edit_text);
-        userPassword = v.findViewById(R.id.user_password_edit_text);
+//        userEmail = v.findViewById(R.id.user_email_edit_text);
+//        userPassword = v.findViewById(R.id.user_password_edit_text);
         userPhoneNumber = v.findViewById(R.id.sig_in_phone_number_edit_text);
         registrationButton = v.findViewById(R.id.user_registration_button);
         progressBar = v.findViewById(R.id.starter_fragment_progress_bar);
@@ -81,26 +91,29 @@ public class StarterFragment extends Fragment {
         });
         loginButton = v.findViewById(R.id.user_login_button);
 
-        //TODO: implemented phone sigIn and email sigIn
-        //- handle focusing on this edit text
-        //- validate phone number onClick sigIn button
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //email login
+//                if(isValidInput()) {
+//                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
+//                    progressBar.setVisibility(View.VISIBLE);
+//                }else{
+//                    Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+//                }
+
+                //phone number login
                 if(isValidInput()) {
-                    signIn(userEmail.getText().toString(), userPassword.getText().toString());
                     progressBar.setVisibility(View.VISIBLE);
+                    String phoneNumber = userPhoneNumber.getText().toString();
+                    checkExistence(phoneNumber);
                 }else{
                     Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
                 }
-//                progressBar.setVisibility(View.VISIBLE);
-//                String phoneNumber = userPhoneNumber.getText().toString();
-//                checkExistence(phoneNumber);
             }
         });
 
-        rightScopeFlag = false;
-        leftScopeFlag = false;
         userPhoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -109,32 +122,9 @@ public class StarterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String s = charSequence.toString();
-                if(s.length() < 6){
-                    rightScopeFlag = false;
-                }
-                if(s.length() < 2){
-                    leftScopeFlag = false;
-                }
-                if(s.length() > 6 && rightScopeFlag && !s.contains(")")){
-                    userPhoneNumber.setText(s.substring(0, 6) + ")" + s.substring(6, s.length()));
-                }
-                if(s.length() > 2 && leftScopeFlag && !s.contains("(")){
-                    userPhoneNumber.setText(s.substring(0, 2) + "(" + s.substring(2, s.length()));
-                }
                 if(charSequence.toString().length() == 1 && charSequence.charAt(0) == '8'){
                     userPhoneNumber.setText("+7");
                 }
-                if(s.length() == 2 && s.equals("+7") && !leftScopeFlag){
-                    userPhoneNumber.setText(s + "(");
-                    leftScopeFlag = true;
-                }
-                if(s.length() == 6 && s.charAt(2) == '(' && !rightScopeFlag){
-                    userPhoneNumber.setText(s + ")");
-                    rightScopeFlag = true;
-                }
-
-
                 userPhoneNumber.setSelection(userPhoneNumber.getText().length());
             }
 
@@ -143,21 +133,11 @@ public class StarterFragment extends Fragment {
 
             }
         });
+
         return v;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null
-                && (currentUser.isEmailVerified()
-                || (currentUser.getPhoneNumber() != null && !currentUser.getPhoneNumber().equals("")))){
-            goToSearchFragment();
-        }
-    }
-
+    //email login
     private void signIn(String userEmail, String userPassword){
         mAuth.signInWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -195,9 +175,15 @@ public class StarterFragment extends Fragment {
     }
 
     public boolean isValidInput(){
-        //TODO: regular expression for checking email
-        //TODO: check password length
-        return !userEmail.getText().toString().equals("") && !userPassword.getText().toString().equals("");
+        //email validation
+        //return !userEmail.getText().toString().equals("") && !userPassword.getText().toString().equals("");
+
+        //phone number validation
+        return !userPhoneNumber.getText().toString().equals("")
+                && userPhoneNumber.getText().toString().length() == 12
+                && userPhoneNumber.getText().toString().charAt(0) == '+'
+                && userPhoneNumber.getText().toString().charAt(1) == '7'
+                && userPhoneNumber.getText().toString().charAt(2) == '9';
     }
 
     public void checkExistence(final String phoneNumber){
