@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +54,9 @@ public class StarterFragment extends Fragment {
     private Button loginButton;
     private ProgressBar progressBar;
 
+    private boolean leftScopeFlag;
+    private boolean rightScopeFlag;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +96,51 @@ public class StarterFragment extends Fragment {
 //                progressBar.setVisibility(View.VISIBLE);
 //                String phoneNumber = userPhoneNumber.getText().toString();
 //                checkExistence(phoneNumber);
+            }
+        });
+
+        rightScopeFlag = false;
+        leftScopeFlag = false;
+        userPhoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String s = charSequence.toString();
+                if(s.length() < 6){
+                    rightScopeFlag = false;
+                }
+                if(s.length() < 2){
+                    leftScopeFlag = false;
+                }
+                if(s.length() > 6 && rightScopeFlag && !s.contains(")")){
+                    userPhoneNumber.setText(s.substring(0, 6) + ")" + s.substring(6, s.length()));
+                }
+                if(s.length() > 2 && leftScopeFlag && !s.contains("(")){
+                    userPhoneNumber.setText(s.substring(0, 2) + "(" + s.substring(2, s.length()));
+                }
+                if(charSequence.toString().length() == 1 && charSequence.charAt(0) == '8'){
+                    userPhoneNumber.setText("+7");
+                }
+                if(s.length() == 2 && s.equals("+7") && !leftScopeFlag){
+                    userPhoneNumber.setText(s + "(");
+                    leftScopeFlag = true;
+                }
+                if(s.length() == 6 && s.charAt(2) == '(' && !rightScopeFlag){
+                    userPhoneNumber.setText(s + ")");
+                    rightScopeFlag = true;
+                }
+
+
+                userPhoneNumber.setSelection(userPhoneNumber.getText().length());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
         return v;
