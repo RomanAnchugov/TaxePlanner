@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,19 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
     public PhoneVerificationFragment(UserItem userItem){
         this.userItem = userItem;
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
     @Nullable
@@ -127,12 +141,16 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
                             .getReference("users/" + mAuth.getUid())
                             .setValue(userItem);
 
-                    FragmentManager fm = getActivity().getFragmentManager();
-                    for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                        fm.popBackStack();
-                    }
+                    if(getActivity() != null) {
+                        FragmentManager fm = getActivity().getFragmentManager();
+                        for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                            fm.popBackStack();
+                        }
 
-                    MainActivity.goToFragment(new SearchFragment(), getActivity(), false);
+                        MainActivity.goToFragment(new SearchFragment(), getActivity(), false);
+                    }else{
+                        return;
+                    }
                 }
                 else{
                     Log.i(TAG, "onComplete: some problems " + task.getException().getLocalizedMessage());

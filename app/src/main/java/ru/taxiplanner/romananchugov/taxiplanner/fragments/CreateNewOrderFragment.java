@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -32,12 +33,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DescriptionDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.NumberOfSeatsDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 
 /**
  * Created by romananchugov on 15.01.2018.
@@ -78,6 +79,19 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
         this.orders = orders;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -94,13 +108,15 @@ public class CreateNewOrderFragment extends DialogFragment implements View.OnCli
 
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
 
-                orders = list;
+                if(list != null) {
+                    orders = list;
 
-                //validation of deleted orders
-                for(int i = 0; i < orders.size(); i++){
-                    if(orders.get(i) == null){
-                        orders.remove(i);
-                        i--;
+                    //validation of deleted orders
+                    for (int i = 0; i < orders.size(); i++) {
+                        if (orders.get(i) == null) {
+                            orders.remove(i);
+                            i--;
+                        }
                     }
                 }
             }

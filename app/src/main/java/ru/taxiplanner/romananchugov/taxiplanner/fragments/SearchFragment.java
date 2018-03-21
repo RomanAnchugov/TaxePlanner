@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -73,6 +74,19 @@ public class SearchFragment extends Fragment{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -107,21 +121,22 @@ public class SearchFragment extends Fragment{
                 GenericTypeIndicator<ArrayList<OrderItem>> generic = new GenericTypeIndicator<ArrayList<OrderItem>>() {};//type indicator
 
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
-                Collections.sort(list, new OrderItemsComparator());
+                if(list != null) {
+                    Collections.sort(list, new OrderItemsComparator());
 
-                orders = list;
+                    orders = list;
 
-                //validation of deleted orders
-                for(int i = 0; i < orders.size(); i++){
-                    if(orders.get(i) == null){
-                        orders.remove(i);
-                        i--;
+                    //validation of deleted orders
+                    for (int i = 0; i < orders.size(); i++) {
+                        if (orders.get(i) == null) {
+                            orders.remove(i);
+                            i--;
+                        }
                     }
+
+                    ordersWithSearch.clear();
+                    ordersWithSearch.addAll(list);
                 }
-
-                ordersWithSearch.clear();
-                ordersWithSearch.addAll(list);
-
                 progressBar.setVisibility(View.GONE);
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
