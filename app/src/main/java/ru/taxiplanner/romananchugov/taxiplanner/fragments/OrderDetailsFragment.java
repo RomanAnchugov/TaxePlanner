@@ -20,11 +20,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,13 +54,12 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 
 public class OrderDetailsFragment extends Fragment implements View.OnClickListener {
 
-    private final String TAG = "OrderDetailsFragment";
-
     private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
-
+    private final String TAG = "OrderDetailsFragment";
     private int position;
     private OrderItem orderItem;
 
+    private ScrollView scrollView;
     private EditText placeFromEditText;
     private EditText placeToEditText;
     private TextView dateTextView;
@@ -89,11 +90,14 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
     @Override
     public void onStop() {
         super.onStop();
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
     }
 
     @SuppressLint("ResourceType")
@@ -109,6 +113,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.order_details_fragment, container, false);
 
+        scrollView = v.findViewById(R.id.order_details_scroll_view);
         linearLayout = v.findViewById(R.id.order_details_linear_layout);
         placeFromEditText = v.findViewById(R.id.order_details_place_from_text_view);
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
@@ -124,7 +129,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         functionButton = v.findViewById(R.id.order_details_function_button);
 
 
-        if(orderItem.getJoinedUsers().size()>0) {
+        if (orderItem.getJoinedUsers().size() > 0) {
             getJoinedUsers(orderItem.getJoinedUsers());
         }
         joinedUsersHeader.setText(getString(R.string.joined_users, orderItem.getJoinedUsers().size()));
@@ -152,24 +157,13 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                 Log.i(TAG, "onClick: functional button");
 
                 if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
-                    //TODO: remade editing with dialogs
-                   dateTextView.setEnabled(true);
-                   dateTextView.setText(orderItem.getDate());
-                    timeTextView.setEnabled(true);
+                    dateTextView.setText(orderItem.getDate());
                     timeTextView.setText(orderItem.getTime());
-                    descriptionEditText.setEnabled(true);
                     descriptionEditText.setText(orderItem.getDescription());
-                    numberOfSeatsTextView.setEnabled(true);
                     numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() + "");
-                    placeFromEditText.setEnabled(true);
                     placeFromEditText.setText(orderItem.getPlaceFrom());
-                    placeToEditText.setEnabled(true);
                     placeToEditText.setText(orderItem.getPlaceTo());
-
-                    placeFromEditText.requestFocus();
-
-                    MenuItem item = menu.findItem(R.id.order_details_submit_menu_item);
-                    item.setVisible(true);
+                    toggleEditMode(true);
                 } else {
                     if (!joined(FirebaseAuth.getInstance().getUid())) {
                         if (orderItem.getJoinedUsers().size() < orderItem.getNumberOfSeatsInCar()) {
@@ -178,7 +172,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                         } else {
                             Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
                         }
-                    }else{
+                    } else {
                         orderItem.removeJoinedUser(FirebaseAuth.getInstance().getUid());
                         FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
                     }
@@ -196,8 +190,9 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         switch (item.getItemId()) {
             case R.id.order_details_submit_menu_item:
                 if (setNewData()) {
+                    toggleEditMode(false);
                     updateDatabase();
-                    getActivity().getFragmentManager().popBackStackImmediate();
+                    //getActivity().getFragmentManager().popBackStackImmediate();
                 }
         }
         return false;
@@ -246,17 +241,18 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         return orderItem.getJoinedUsers().contains(uid);
     }
 
-    private void getJoinedUsers(final ArrayList<String> joinedUsers){
+    private void getJoinedUsers(final ArrayList<String> joinedUsers) {
         Log.i(TAG, "getJoinedUsers: progress. joined users size - " + joinedUsers.size());
-        if(progressBar.getVisibility() == View.GONE) {
+        if (progressBar.getVisibility() == View.GONE) {
             progressBar.setVisibility(View.VISIBLE);
         }
-        for(String uId: joinedUsers) {
+        for (String uId : joinedUsers) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users/" + uId);
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    GenericTypeIndicator<UserItem> generic = new GenericTypeIndicator<UserItem>() {};//type indicator
+                    GenericTypeIndicator<UserItem> generic = new GenericTypeIndicator<UserItem>() {
+                    };//type indicator
 
                     final UserItem userItem = dataSnapshot.getValue(generic);
                     Log.i(TAG, "onDataChange: got a joined user - " + userItem.getName());
@@ -290,34 +286,34 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-            switch (view.getId()){
-                case R.id.order_details_date_text_view:
-                    Log.i(TAG, "onClick: order details date picker click");
-                    new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
-                    break;
-                case R.id.order_details_time_text_view:
-                    Log.i(TAG, "onClick: order details time picker click");
-                    new TimePickerDialogFragment(orderItem, timeTextView).show(getFragmentManager(), "time picker");
-                    break;
-                case R.id.order_details_number_of_seats_text_view:
-                    Log.i(TAG, "onClick: order details number of seats picker click");
-                    Bundle args1 = new Bundle();
-                    args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, numberOfSeatsTextView.getText().toString());
-                    NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment(orderItem);
-                    numberOfSeatsDialogFragment.setArguments(args1);
-                    numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
-                    numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");
-                    break;
-            }
+        switch (view.getId()) {
+            case R.id.order_details_date_text_view:
+                Log.i(TAG, "onClick: order details date picker click");
+                new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
+                break;
+            case R.id.order_details_time_text_view:
+                Log.i(TAG, "onClick: order details time picker click");
+                new TimePickerDialogFragment(orderItem, timeTextView).show(getFragmentManager(), "time picker");
+                break;
+            case R.id.order_details_number_of_seats_text_view:
+                Log.i(TAG, "onClick: order details number of seats picker click");
+                Bundle args1 = new Bundle();
+                args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, numberOfSeatsTextView.getText().toString());
+                NumberOfSeatsDialogFragment numberOfSeatsDialogFragment = new NumberOfSeatsDialogFragment(orderItem);
+                numberOfSeatsDialogFragment.setArguments(args1);
+                numberOfSeatsDialogFragment.setTargetFragment(this, REQUEST_CODE_FOR_NUMBER_OF_SEATS);
+                numberOfSeatsDialogFragment.show(getFragmentManager(), "number of seats dialog");
+                break;
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CODE_FOR_NUMBER_OF_SEATS:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     String numberOfSeats = bundle.getString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, "fuck");
                     orderItem.setNumberOfSeatsInCar(Integer.parseInt(numberOfSeats));
@@ -325,6 +321,25 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     numberOfSeatsTextView.setText(numberOfSeats);
                 }
                 break;
+        }
+    }
+
+    public void toggleEditMode(boolean mode){
+        dateTextView.setEnabled(mode);
+        timeTextView.setEnabled(mode);
+        descriptionEditText.setEnabled(mode);
+        numberOfSeatsTextView.setEnabled(mode);
+        placeFromEditText.setEnabled(mode);
+        placeToEditText.setEnabled(mode);
+        MenuItem menuItem = menu.findItem(R.id.order_details_submit_menu_item);
+        if(mode) {
+            scrollView.setPadding(0, 0, 0, 0);
+            functionButton.setVisibility(View.GONE);
+            menuItem.setVisible(true);
+        }else{
+            scrollView.setPadding(0, 0, 0, 100);
+            functionButton.setVisibility(View.VISIBLE);
+            menuItem.setVisible(false);
         }
     }
 }
