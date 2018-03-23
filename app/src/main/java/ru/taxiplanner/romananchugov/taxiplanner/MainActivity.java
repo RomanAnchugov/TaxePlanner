@@ -32,12 +32,6 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        //starter fragment
-//        FragmentManager manager = getFragmentManager();
-//        FragmentTransaction transaction = manager.beginTransaction();
-//        StarterFragment starterFragment = new StarterFragment();
-//        transaction.add(R.id.fragment_container, starterFragment);
-//        transaction.commit();
         goToFragment(new StarterFragment(), this, false);
 
     }
