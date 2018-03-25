@@ -196,7 +196,10 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                 }
                 break;
             case R.id.order_details_delete_menu_item:
-                
+                FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(null);
+                getFragmentManager().popBackStackImmediate();
+                break;
+
         }
         return false;
     }
@@ -217,6 +220,9 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
             Snackbar.make(getView(), "Please fill all gaps", Snackbar.LENGTH_LONG).show();
             return false;
         }
+    }
+    public void deleteOrder(){
+
     }
 
     public void updateDatabase() {
