@@ -194,6 +194,9 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     updateDatabase();
                     //getActivity().getFragmentManager().popBackStackImmediate();
                 }
+                break;
+            case R.id.order_details_delete_menu_item:
+                
         }
         return false;
     }
@@ -324,22 +327,24 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    public void toggleEditMode(boolean mode){
-        dateTextView.setEnabled(mode);
-        timeTextView.setEnabled(mode);
-        descriptionEditText.setEnabled(mode);
-        numberOfSeatsTextView.setEnabled(mode);
-        placeFromEditText.setEnabled(mode);
-        placeToEditText.setEnabled(mode);
-        MenuItem menuItem = menu.findItem(R.id.order_details_submit_menu_item);
-        if(mode) {
+    public void toggleEditMode(boolean editable){
+        dateTextView.setEnabled(editable);
+        timeTextView.setEnabled(editable);
+        descriptionEditText.setEnabled(editable);
+        numberOfSeatsTextView.setEnabled(editable);
+        placeFromEditText.setEnabled(editable);
+        placeToEditText.setEnabled(editable);
+        MenuItem submitChangesItem = menu.findItem(R.id.order_details_submit_menu_item);
+        MenuItem deleteOrderItem = menu.findItem(R.id.order_details_delete_menu_item);
+
+        submitChangesItem.setVisible(editable);
+        deleteOrderItem.setVisible(editable);
+        if(editable) {
             scrollView.setPadding(0, 0, 0, 0);
             functionButton.setVisibility(View.GONE);
-            menuItem.setVisible(true);
         }else{
             scrollView.setPadding(0, 0, 0, 100);
             functionButton.setVisibility(View.VISIBLE);
-            menuItem.setVisible(false);
         }
     }
 }

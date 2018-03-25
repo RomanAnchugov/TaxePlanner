@@ -97,22 +97,6 @@ public class SearchFragment extends Fragment{
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("orders");//branch "orders" in database
 
-//        //test code
-//        for(int i = 0; i < 10; i++){
-//            OrderItem order = new OrderItem();
-//            order.setDescription("Description");
-//            order.setPlaceFrom("metro 1");
-//            order.setPlaceTo("metro 2");
-//            order.setStringForSearch();
-//            order.setDate(1999, 6, 1, 7, 0);
-//            order.setNumberOfSeatsInCar(8);
-//            order.setUserCreatedId(FirebaseAuth.getInstance().getUid());
-//            order.setNumberOfOccupiedSeats(0);
-//            order.setNumberOfSeatsInCar(4);
-//
-//            orders.add(order);
-//        }
-//        myRef.setValue(orders);
 
         //if some on orders changed and after first loading
         myRef.addValueEventListener(new ValueEventListener() {
@@ -123,7 +107,8 @@ public class SearchFragment extends Fragment{
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
                 if(list != null) {
                     Collections.sort(list, new OrderItemsComparator());
-
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
+                    orders.clear();
                     orders = list;
 
                     //validation of deleted orders
@@ -133,6 +118,7 @@ public class SearchFragment extends Fragment{
                             i--;
                         }
                     }
+                    ref.setValue(list);
 
                     ordersWithSearch.clear();
                     ordersWithSearch.addAll(list);
@@ -321,26 +307,30 @@ public class SearchFragment extends Fragment{
 
         @Override
         public int compare(OrderItem orderItem, OrderItem t1) {
-            if(orderItem.getYear() == t1.getYear()){
-                if(orderItem.getMonth() == t1.getMonth()){
-                    if(orderItem.getDay() == t1.getDay()){
-                        if(orderItem.getHour() == t1.getHour()){
-                            if(orderItem.getMinutes() == t1.getMinutes()){
-                                return 0;
-                            }else{
-                                return orderItem.getMinutes() > t1.getMinutes() ? 1 : -1;
+            if(orderItem != null && t1 != null) {
+                if (orderItem.getYear() == t1.getYear()) {
+                    if (orderItem.getMonth() == t1.getMonth()) {
+                        if (orderItem.getDay() == t1.getDay()) {
+                            if (orderItem.getHour() == t1.getHour()) {
+                                if (orderItem.getMinutes() == t1.getMinutes()) {
+                                    return 0;
+                                } else {
+                                    return orderItem.getMinutes() > t1.getMinutes() ? 1 : -1;
+                                }
+                            } else {
+                                return orderItem.getHour() > t1.getHour() ? 1 : -1;
                             }
-                        }else{
-                            return orderItem.getHour() > t1.getHour() ? 1 : -1;
+                        } else {
+                            return orderItem.getDay() > t1.getDay() ? 1 : -1;
                         }
-                    }else{
-                        return orderItem.getDay() > t1.getDay() ? 1 : -1;
+                    } else {
+                        return orderItem.getMonth() > t1.getMonth() ? 1 : -1;
                     }
-                }else{
-                    return orderItem.getMonth() > t1.getMonth() ? 1 : -1;
+                } else {
+                    return orderItem.getYear() > t1.getYear() ? 1 : -1;
                 }
             }else{
-                return orderItem.getYear() > t1.getYear() ? 1 : -1;
+                return 0;
             }
         }
     }
