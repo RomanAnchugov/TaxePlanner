@@ -53,6 +53,8 @@
     <string name="joined_users">Joined Users(%1$d)</string>
     <string name="joined_users_placeholder">%1$s %2$s</string>
     <string name="your_orders">Your orders</string>
-    <string name="delete_order">delete order</string>
+    <string name="delete_order">Delete?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
 </resources>

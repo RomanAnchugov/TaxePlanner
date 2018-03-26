@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,8 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.NumberOfSeatsDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.OrderDeleteAcceptDialog;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
 import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
@@ -55,6 +59,7 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.UserItem;
 public class OrderDetailsFragment extends Fragment implements View.OnClickListener {
 
     private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
+    private static final int REQUEST_CODE_FOR_DELETE = 1;
     private final String TAG = "OrderDetailsFragment";
     private int position;
     private OrderItem orderItem;
@@ -196,8 +201,9 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                 }
                 break;
             case R.id.order_details_delete_menu_item:
-                FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(null);
-                getFragmentManager().popBackStackImmediate();
+                OrderDeleteAcceptDialog dialog = new OrderDeleteAcceptDialog();
+                dialog.setTargetFragment(this, REQUEST_CODE_FOR_DELETE);
+                dialog.show(getFragmentManager(), "delete");
                 break;
 
         }
@@ -220,9 +226,6 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
             Snackbar.make(getView(), "Please fill all gaps", Snackbar.LENGTH_LONG).show();
             return false;
         }
-    }
-    public void deleteOrder(){
-
     }
 
     public void updateDatabase() {
@@ -330,6 +333,21 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     numberOfSeatsTextView.setText(numberOfSeats);
                 }
                 break;
+            case REQUEST_CODE_FOR_DELETE:
+                if(resultCode == Activity.RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    String ans = bundle.getString("ans");
+                    if(ans.equals("true")){
+                        FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(null)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+                                        getFragmentManager().popBackStackImmediate();
+                                    }
+                                });
+                    }
+                }
         }
     }
 

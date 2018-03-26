@@ -3,6 +3,7 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -49,6 +50,8 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
     //TODO: information about user
 public class SearchFragment extends Fragment{
     private static final String TAG = "SearchFragment";
+
+    private static final  int ORDER_DETAILS_REQUEST = 1;
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -102,6 +105,7 @@ public class SearchFragment extends Fragment{
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i(TAG, "onDataChange: search fragment - data set changed");
                 GenericTypeIndicator<ArrayList<OrderItem>> generic = new GenericTypeIndicator<ArrayList<OrderItem>>() {};//type indicator
 
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
@@ -123,6 +127,11 @@ public class SearchFragment extends Fragment{
                     ordersWithSearch.clear();
                     ordersWithSearch.addAll(list);
                 }
+                if(list == null){
+                    ordersWithSearch.clear();
+                    orders.clear();
+                }
+
                 progressBar.setVisibility(View.GONE);
                 searchFragmentRecyclerView.getAdapter().notifyDataSetChanged();
             }
@@ -232,8 +241,9 @@ public class SearchFragment extends Fragment{
             }
         });
 
+        Log.i(TAG, "onCreateView: here");
         progressBar = v.findViewById(R.id.search_fragment_progress_bar);
-        if(orders.size() == 0){
+        if(orders.size() == 0 && ordersWithSearch.size() == 0){
             progressBar.setVisibility(View.VISIBLE);
         }
 
@@ -344,10 +354,10 @@ public class SearchFragment extends Fragment{
         transaction.commit();
     }
     public void goToOrderDetailsFragment(int position, OrderItem order){
-        //TODO: animation for opening fragment from this element(radial transformation)
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         OrderDetailsFragment fragment = new OrderDetailsFragment(position, order);
+        fragment.setTargetFragment(this, ORDER_DETAILS_REQUEST);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
@@ -365,5 +375,16 @@ public class SearchFragment extends Fragment{
         }
 
         return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case ORDER_DETAILS_REQUEST:
+                Log.i(TAG, "onActivityResult: order details request ");
+
+        }
     }
 }
