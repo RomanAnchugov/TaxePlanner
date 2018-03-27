@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_margin="0dp" />
+        android:layout_margin="0dp"
+        android:background="@color/yellowTheme"/>
 
     <ScrollView
         android:id="@+id/order_details_scroll_view"
@@ -28,6 +30,7 @@
             android:orientation="vertical"
             android:paddingBottom="15dp">
 
+            <!--From\To edit texts-->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,7 +64,9 @@
 
             <View style="@style/LightGrayHorizontalLine" />
 
+            <!--Date Picker -->
             <LinearLayout
+                android:id="@+id/order_details_date_picker_linear_layout"
                 style="@style/ContainerForOrderDetail">
 
                 <TextView
@@ -71,34 +76,69 @@
 
                 <TextView
                     android:id="@+id/order_details_date_text_view"
-                    style="@style/OrderDetailsTextViewNew" />
+                    style="@style/OrderDetailsTextViewNew"
+                    android:gravity="center"/>
 
             </LinearLayout>
 
             <View style="@style/LightGrayHorizontalLine" />
 
+            <!--Time picker-->
+            <LinearLayout
+                android:id="@+id/order_details_time_picker_linear_layout"
+                style="@style/ContainerForOrderDetail">
 
+                <TextView
+                    android:text="@string/time_of_trip"
+                    style="@style/OrderDetailsTextViewNew"
+                    android:layout_gravity="start"/>
 
-            <TextView
-                android:id="@+id/order_details_time_text_view"
-                style="@style/OrderDetailsTextView"
-                android:background="?android:attr/selectableItemBackground" />
+                <TextView
+                    android:id="@+id/order_details_time_text_view"
+                    style="@style/OrderDetailsTextViewNew"
+                    android:gravity="center"/>
 
-            <View style="@style/LightGrayHorizontalLine" />
-
-            <EditText
-                android:id="@+id/order_details_description_text_view"
-                style="@style/OrderDetailsTextView" />
-
-            <View style="@style/LightGrayHorizontalLine" />
-
-            <TextView
-                android:id="@+id/order_details_number_of_seats_text_view"
-                style="@style/OrderDetailsTextView"
-                android:background="?android:attr/selectableItemBackground" />
+            </LinearLayout>
 
             <View style="@style/LightGrayHorizontalLine" />
 
+            <!--Description -->
+            <LinearLayout
+                style="@style/ContainerForOrderDetail"
+                android:orientation="vertical">
+                <TextView
+                    android:text="@string/trip_description"
+                    style="@style/OrderDetailsTextViewNew"/>
+                <EditText
+                    android:id="@+id/order_details_description_text_view"
+                    style="@style/OrderDetailsTextView"
+                    android:textSize="16sp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"/>
+            </LinearLayout>
+
+            <View style="@style/LightGrayHorizontalLine" />
+
+            <!--Number of seats picker-->
+            <LinearLayout
+                android:id="@+id/order_details_number_of_seats_linear_layout"
+                style="@style/ContainerForOrderDetail">
+
+                <TextView
+                    android:text="@string/number_of_seats_in_car"
+                    style="@style/OrderDetailsTextViewNew"
+                    android:layout_gravity="start"/>
+
+                <TextView
+                    android:id="@+id/order_details_number_of_seats_text_view"
+                    style="@style/OrderDetailsTextViewNew"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <View style="@style/LightGrayHorizontalLine" />
+
+            <!--Joined user -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

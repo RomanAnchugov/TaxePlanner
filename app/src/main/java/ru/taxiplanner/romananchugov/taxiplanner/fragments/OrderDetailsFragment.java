@@ -67,9 +67,12 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     private ScrollView scrollView;
     private EditText placeFromEditText;
     private EditText placeToEditText;
+    private LinearLayout dateLinearLayout;
     private TextView dateTextView;
+    private LinearLayout timeLinearLayout;
     private TextView timeTextView;
     private EditText descriptionEditText;
+    private LinearLayout numberOfSeatsLinearLayout;
     private TextView numberOfSeatsTextView;
     private Button functionButton;
     private TextView joinedUsersHeader;
@@ -123,12 +126,15 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         placeFromEditText = v.findViewById(R.id.order_details_place_from_text_view);
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
         dateTextView = v.findViewById(R.id.order_details_date_text_view);
-        dateTextView.setOnClickListener(this);
+        dateLinearLayout = v.findViewById(R.id.order_details_date_picker_linear_layout);
+        dateLinearLayout.setOnClickListener(this);
         timeTextView = v.findViewById(R.id.order_details_time_text_view);
-        timeTextView.setOnClickListener(this);
+        timeLinearLayout = v.findViewById(R.id.order_details_time_picker_linear_layout);
+        timeLinearLayout.setOnClickListener(this);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsTextView = v.findViewById(R.id.order_details_number_of_seats_text_view);
-        numberOfSeatsTextView.setOnClickListener(this);
+        numberOfSeatsLinearLayout = v.findViewById(R.id.order_details_number_of_seats_linear_layout);
+        numberOfSeatsLinearLayout.setOnClickListener(this);
         progressBar = v.findViewById(R.id.order_details_progress_bar);
         joinedUsersHeader = v.findViewById(R.id.joined_user_header_text_view);
         functionButton = v.findViewById(R.id.order_details_function_button);
@@ -140,15 +146,12 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         joinedUsersHeader.setText(getString(R.string.joined_users, orderItem.getJoinedUsers().size()));
 
 
-        placeFromEditText.setText(getString(R.string.order_item_template_from, orderItem.getPlaceFrom()));
-        placeToEditText.setText(getString(R.string.order_item_template_to, orderItem.getPlaceTo()));
-        dateTextView.setText(getString(R.string.order_item_template_date, orderItem.getDate()));
-        timeTextView.setText(getString(R.string.order_item_template_time, orderItem.getTime()));
-        descriptionEditText.setText(getString(R.string.order_item_template_description, orderItem.getDescription()));
-        numberOfSeatsTextView.setText(
-                getString(R.string.order_item_template_number_seats,
-                        orderItem.getNumberOfSeatsInCar() - orderItem.getJoinedUsers().size())
-        );
+        placeFromEditText.setText(orderItem.getPlaceFrom());
+        placeToEditText.setText(orderItem.getPlaceTo());
+        dateTextView.setText(orderItem.getDate());
+        timeTextView.setText(orderItem.getTime());
+        descriptionEditText.setText(orderItem.getDescription());
+        numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() - orderItem.getJoinedUsers().size() + "");
         functionButton.setText(
                 FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId()) ? "Edit"
                         : orderItem.getJoinedUsers().contains(FirebaseAuth.getInstance().getUid()) ? "Leave" : "Join"
@@ -299,15 +302,15 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.order_details_date_text_view:
+            case R.id.order_details_date_picker_linear_layout:
                 Log.i(TAG, "onClick: order details date picker click");
                 new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
                 break;
-            case R.id.order_details_time_text_view:
+            case R.id.order_details_time_picker_linear_layout:
                 Log.i(TAG, "onClick: order details time picker click");
                 new TimePickerDialogFragment(orderItem, timeTextView).show(getFragmentManager(), "time picker");
                 break;
-            case R.id.order_details_number_of_seats_text_view:
+            case R.id.order_details_number_of_seats_linear_layout:
                 Log.i(TAG, "onClick: order details number of seats picker click");
                 Bundle args1 = new Bundle();
                 args1.putString(NumberOfSeatsDialogFragment.EXTRA_NUMBER_OF_SEATS_TAG, numberOfSeatsTextView.getText().toString());
