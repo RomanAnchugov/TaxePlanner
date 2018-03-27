@@ -127,13 +127,16 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         placeToEditText = v.findViewById(R.id.order_details_place_to_text_view);
         dateTextView = v.findViewById(R.id.order_details_date_text_view);
         dateLinearLayout = v.findViewById(R.id.order_details_date_picker_linear_layout);
+        dateLinearLayout.setEnabled(false);
         dateLinearLayout.setOnClickListener(this);
         timeTextView = v.findViewById(R.id.order_details_time_text_view);
         timeLinearLayout = v.findViewById(R.id.order_details_time_picker_linear_layout);
+        timeLinearLayout.setEnabled(false);
         timeLinearLayout.setOnClickListener(this);
         descriptionEditText = v.findViewById(R.id.order_details_description_text_view);
         numberOfSeatsTextView = v.findViewById(R.id.order_details_number_of_seats_text_view);
         numberOfSeatsLinearLayout = v.findViewById(R.id.order_details_number_of_seats_linear_layout);
+        numberOfSeatsLinearLayout.setEnabled(false);
         numberOfSeatsLinearLayout.setOnClickListener(this);
         progressBar = v.findViewById(R.id.order_details_progress_bar);
         joinedUsersHeader = v.findViewById(R.id.joined_user_header_text_view);
@@ -304,7 +307,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
         switch (view.getId()) {
             case R.id.order_details_date_picker_linear_layout:
                 Log.i(TAG, "onClick: order details date picker click");
-                new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
+                    new DatePickerDialogFragment(orderItem, dateTextView).show(getFragmentManager(), "date picker");
                 break;
             case R.id.order_details_time_picker_linear_layout:
                 Log.i(TAG, "onClick: order details time picker click");
@@ -355,10 +358,10 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     }
 
     public void toggleEditMode(boolean editable){
-        dateTextView.setEnabled(editable);
-        timeTextView.setEnabled(editable);
+        dateLinearLayout.setEnabled(editable);
+        timeLinearLayout.setEnabled(editable);
         descriptionEditText.setEnabled(editable);
-        numberOfSeatsTextView.setEnabled(editable);
+        numberOfSeatsLinearLayout.setEnabled(editable);
         placeFromEditText.setEnabled(editable);
         placeToEditText.setEnabled(editable);
         MenuItem submitChangesItem = menu.findItem(R.id.order_details_submit_menu_item);
