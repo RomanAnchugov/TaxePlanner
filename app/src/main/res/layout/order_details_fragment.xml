@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp"
+    android:padding="0dp"
     app:cardCornerRadius="0dp"
-    app:cardElevation="5dp"
-    android:padding="0dp">
+    app:cardElevation="5dp">
+
     <Button
         android:id="@+id/order_details_function_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_margin="0dp"/>
+        android:layout_margin="0dp" />
 
     <ScrollView
         android:id="@+id/order_details_scroll_view"
@@ -28,11 +28,32 @@
             android:orientation="vertical"
             android:paddingBottom="15dp">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingEnd="5dp"
+                android:paddingLeft="5dp"
+                android:paddingStart="5dp"
+                android:text="@string/from_text_for_create_new_order_fragment"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
             <EditText
                 android:id="@+id/order_details_place_from_text_view"
-                style="@style/OrderDetailsTextView" />
+                style="@style/OrderDetailsTextView"
+                tools:text="a;sldk;alskd;laskd;lk" />
 
-            <View style="@style/LightGrayHorizontalLine" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingEnd="5dp"
+                android:paddingLeft="5dp"
+                android:paddingStart="5dp"
+                android:text="@string/to_text_for_create_new_order_fragment"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/order_details_place_to_text_view"
@@ -40,12 +61,23 @@
 
             <View style="@style/LightGrayHorizontalLine" />
 
-            <TextView
-                android:id="@+id/order_details_date_text_view"
-                style="@style/OrderDetailsTextView"
-                android:background="?android:attr/selectableItemBackground" />
+            <LinearLayout
+                style="@style/ContainerForOrderDetail">
+
+                <TextView
+                    android:text="@string/date_of_trip"
+                    style="@style/OrderDetailsTextViewNew"
+                    android:layout_gravity="start"/>
+
+                <TextView
+                    android:id="@+id/order_details_date_text_view"
+                    style="@style/OrderDetailsTextViewNew" />
+
+            </LinearLayout>
 
             <View style="@style/LightGrayHorizontalLine" />
+
+
 
             <TextView
                 android:id="@+id/order_details_time_text_view"
