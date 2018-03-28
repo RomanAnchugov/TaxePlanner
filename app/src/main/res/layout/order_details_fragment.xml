@@ -39,7 +39,6 @@
                 android:paddingLeft="5dp"
                 android:paddingStart="5dp"
                 android:text="@string/from_text_for_create_new_order_fragment"
-                android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <EditText
@@ -55,7 +54,6 @@
                 android:paddingLeft="5dp"
                 android:paddingStart="5dp"
                 android:text="@string/to_text_for_create_new_order_fragment"
-                android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <EditText
