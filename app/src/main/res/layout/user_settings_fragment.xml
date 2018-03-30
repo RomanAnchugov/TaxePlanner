@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -36,10 +39,19 @@
         android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
-    <Button
-        android:id="@+id/log_out_button"
+</LinearLayout>
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/logout"
-        android:background="@color/yellowTheme" />
-</LinearLayout>
+        android:layout_alignParentBottom="true"
+        app:contentPadding="10dp"
+        app:cardElevation="10dp"
+        >
+        <Button
+            android:id="@+id/log_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:background="@color/yellowTheme" />
+    </android.support.v7.widget.CardView>
+</RelativeLayout>
