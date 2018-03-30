@@ -72,11 +72,12 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.phone_verification_fragment, container, false);
-        Toast.makeText(getActivity(), "We will send you verification email, check it", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "We will send you verification code, check it", Toast.LENGTH_LONG).show();
 
         button = v.findViewById(R.id.phone_verification_submit_button);
         button.setOnClickListener(this);

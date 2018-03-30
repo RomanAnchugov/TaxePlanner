@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,6 +55,7 @@ public class UserSettingsFragment extends Fragment{
     private EditText userSurname;
     private EditText phoneNumber;
     private Button logoutButton;
+    private ProgressBar progressBar;
 
     private RecyclerView recyclerView;
     private List<OrderItem> orders;
@@ -113,6 +115,8 @@ public class UserSettingsFragment extends Fragment{
                 MainActivity.goToFragment(new StarterFragment(), getActivity(), false);
             }
         });
+        progressBar = v.findViewById(R.id.user_setting_progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
         recyclerView = v.findViewById(R.id.user_setting_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(new RecyclerAdapter());
@@ -122,7 +126,6 @@ public class UserSettingsFragment extends Fragment{
         userName.setEnabled(false);
         phoneNumber.setEnabled(false);
 
-//       submitMenuItem.setVisible(false);
 
         getUser();
         return v;
@@ -138,6 +141,7 @@ public class UserSettingsFragment extends Fragment{
                 UserItem  userItem = dataSnapshot.getValue(generic);
                 Log.i(TAG, "onDataChange: " + userItem.toString());
 
+                progressBar.setVisibility(View.GONE);
                 userName.setText(userItem.getName());
                 userSurname.setText(userItem.getSurname());
                 phoneNumber.setText(userItem.getPhoneNumber());

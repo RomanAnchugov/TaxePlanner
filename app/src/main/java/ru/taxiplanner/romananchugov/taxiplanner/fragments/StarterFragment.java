@@ -138,8 +138,6 @@ public class StarterFragment extends Fragment {
     }
 
     public boolean isValidInput(){
-        //email validation
-        //return !userEmail.getText().toString().equals("") && !userPassword.getText().toString().equals("");
 
         //phone number validation
         return !userPhoneNumber.getText().toString().equals("")
