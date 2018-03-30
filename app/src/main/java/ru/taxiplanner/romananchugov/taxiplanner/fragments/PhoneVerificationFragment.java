@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,6 +52,7 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
 
     private Button button;
     private EditText editText;
+    private ProgressBar progressBar;
 
     public PhoneVerificationFragment(UserItem userItem){
         this.userItem = userItem;
@@ -83,6 +85,8 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
         button.setOnClickListener(this);
 
         editText = v.findViewById(R.id.phone_verification_edit_text);
+
+        progressBar = v.findViewById(R.id.phone_verification_progress_bar);
 
         createAccountPhone();
         return v;
@@ -122,12 +126,14 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-        //TODO: tests for it
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
         if(verId != null && editText.getText().toString().length() == 6) {
+            progressBar.setVisibility(View.VISIBLE);
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verId, editText.getText().toString());
             signInWithPhoneCredentials(credential);
         }else{
-            Snackbar.make(getView(), "Please enter the code", Snackbar.LENGTH_SHORT);
+            Snackbar.make(getView(), "Please enter the code", Snackbar.LENGTH_SHORT).show();
             Log.i(TAG, "onClick: ");
         }
     }
@@ -137,6 +143,8 @@ public class PhoneVerificationFragment extends Fragment implements View.OnClickL
         mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
+                progressBar.setVisibility(View.GONE);
 
                 if(task.isSuccessful()){
                     Log.i(TAG, "signInWithPhoneCredentials: onComplete: successful- > sigIn");

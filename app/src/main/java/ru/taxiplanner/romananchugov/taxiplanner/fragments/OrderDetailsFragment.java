@@ -273,6 +273,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                     };//type indicator
 
                     final UserItem userItem = dataSnapshot.getValue(generic);
+
                     Log.i(TAG, "onDataChange: got a joined user - " + userItem.getName());
                     //joinedUsersTextView.setText(joinedUsersTextView.getText().toString() + "\n" +userItem.getName());
                     View view = getActivity().getLayoutInflater().inflate(R.layout.order_details_joined_user_view,
