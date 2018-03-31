@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +23,10 @@
             android:id="@+id/set_order_place_from_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:hint="@string/name_of_street_or_station"/>
         <TextView
             android:layout_width="match_parent"
@@ -40,7 +42,10 @@
             android:id="@+id/set_order_place_to_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:hint="@string/name_of_street_or_station"/>
 
 
@@ -174,19 +179,13 @@
                 style="@style/LightGrayHorizontalLine"/>
 
         </LinearLayout><!--LinearLayout for pickers -->
-
         <Button
             android:id="@+id/submit_new_order_button"
-            android:text="@string/create_order_sign"
-            android:textSize="30sp"
-            android:textColor="#FFFFFF"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/create_button_shape"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/yellowTheme"
+            android:layout_margin="10dp"
+            android:text="@string/create_order_text"/>
     </LinearLayout><!--MAIN LinearLAYOUT -->
 
 </ScrollView>

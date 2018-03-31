@@ -22,7 +22,7 @@
     <string name="not_written">not written</string>
     <string name="show_my_phone_number">Show my phone number</string>
     <string name="you_number_is">You number is</string>
-    <string name="create_order_sign"><![CDATA[>]]></string>
+    <string name="create_order_text">create</string>
     <string name="set_order_date_status">%1$s.%2$s.%3$s</string>
     <string name="number_of_seats_in_car">Number of seats in car</string>
     <string name="cancel">Cancel</string>

@@ -9,19 +9,24 @@
     app:cardCornerRadius="0dp"
     app:cardElevation="5dp">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:contentPadding="10dp"
+        app:cardElevation="10dp">
     <Button
         android:id="@+id/order_details_function_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="0dp"
         android:background="@color/yellowTheme"/>
+    </android.support.v7.widget.CardView>
 
     <ScrollView
         android:id="@+id/order_details_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="50dp">
+        android:paddingBottom="67dp">
 
         <LinearLayout
             android:id="@+id/order_details_linear_layout"

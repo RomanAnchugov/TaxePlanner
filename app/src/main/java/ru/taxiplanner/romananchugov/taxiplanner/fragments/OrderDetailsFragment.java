@@ -374,8 +374,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
             scrollView.setPadding(0, 0, 0, 0);
             functionButton.setVisibility(View.GONE);
         }else{
-            scrollView.setPadding(0, 0, 0, 100);
             functionButton.setVisibility(View.VISIBLE);
+            scrollView.setPadding(0, 0, 0, 117);
         }
     }
 }
