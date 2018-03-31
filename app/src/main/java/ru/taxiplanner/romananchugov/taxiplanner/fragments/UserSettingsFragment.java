@@ -88,7 +88,8 @@ public class UserSettingsFragment extends Fragment{
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         for(int i = 0; i < orders.size(); i++){
-            if(!orders.get(i).getUserCreatedId().equals(FirebaseAuth.getInstance().getUid())){
+            if(!orders.get(i).getUserCreatedId().equals(FirebaseAuth.getInstance().getUid())
+                    && !orders.get(i).getJoinedUsers().contains(FirebaseAuth.getInstance().getUid())){
                 orders.remove(i);
                 i--;
             }
