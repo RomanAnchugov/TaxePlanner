@@ -46,8 +46,6 @@ import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
  * Created by romananchugov on 30.12.2017.
  */
 
-
-    //TODO: information about user
 public class SearchFragment extends Fragment{
     private static final String TAG = "SearchFragment";
 
