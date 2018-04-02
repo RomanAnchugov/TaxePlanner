@@ -58,5 +58,6 @@
     <string name="no">no</string>
     <string name="registration_text">We will send an SMS with confirmation code to yor phone number</string>
     <string name="phone_verification_text">We\'ve sent an SMS with an activation code to your phone</string>
+    <string name="submit_changes">Submit changes?</string>
 
 </resources>

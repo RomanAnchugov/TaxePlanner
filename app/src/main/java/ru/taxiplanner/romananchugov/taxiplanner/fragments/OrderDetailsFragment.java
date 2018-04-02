@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import ru.taxiplanner.romananchugov.taxiplanner.R;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.DatePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.NumberOfSeatsDialogFragment;
+import ru.taxiplanner.romananchugov.taxiplanner.dialogs.OrderChangesSubmitDialog;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.OrderDeleteAcceptDialog;
 import ru.taxiplanner.romananchugov.taxiplanner.dialogs.TimePickerDialogFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.service.OrderItem;
@@ -60,6 +61,8 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
 
     private static final int REQUEST_CODE_FOR_NUMBER_OF_SEATS = 2;
     private static final int REQUEST_CODE_FOR_DELETE = 1;
+    private static final int REQUEST_CODE_FOR_SUBMIT = 3;
+
     private final String TAG = "OrderDetailsFragment";
     private int position;
     private OrderItem orderItem;
@@ -200,16 +203,14 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.order_details_submit_menu_item:
-                if (setNewData()) {
-                    toggleEditMode(false);
-                    updateDatabase();
-                    getFragmentManager().popBackStackImmediate();
-                }
+                OrderChangesSubmitDialog submitDialog = new OrderChangesSubmitDialog();
+                submitDialog.setTargetFragment(this, REQUEST_CODE_FOR_SUBMIT);
+                submitDialog.show(getFragmentManager(), "submit");
                 break;
             case R.id.order_details_delete_menu_item:
-                OrderDeleteAcceptDialog dialog = new OrderDeleteAcceptDialog();
-                dialog.setTargetFragment(this, REQUEST_CODE_FOR_DELETE);
-                dialog.show(getFragmentManager(), "delete");
+                OrderDeleteAcceptDialog deleteAcceptDialog = new OrderDeleteAcceptDialog();
+                deleteAcceptDialog.setTargetFragment(this, REQUEST_CODE_FOR_DELETE);
+                deleteAcceptDialog.show(getFragmentManager(), "delete");
                 break;
 
         }
@@ -353,6 +354,18 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                                         getFragmentManager().popBackStackImmediate();
                                     }
                                 });
+                    }
+                }
+            case REQUEST_CODE_FOR_SUBMIT:
+                if(resultCode == Activity.RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    String ans = bundle.getString("ans");
+                    if(ans.equals("true")){
+                        if (setNewData()) {
+                            toggleEditMode(false);
+                            updateDatabase();
+                            getFragmentManager().popBackStackImmediate();
+                        }
                     }
                 }
         }
