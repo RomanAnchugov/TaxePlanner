@@ -108,6 +108,7 @@ public class SearchFragment extends Fragment{
 
                 ArrayList<OrderItem> list = dataSnapshot.getValue(generic);
                 if(list != null) {
+                    Log.i(TAG, "onDataChange: list != null; sort");
                     Collections.sort(list, new OrderItemsComparator());
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
                     orders.clear();

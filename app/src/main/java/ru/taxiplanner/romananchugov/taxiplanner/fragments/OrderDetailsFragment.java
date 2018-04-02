@@ -203,7 +203,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                 if (setNewData()) {
                     toggleEditMode(false);
                     updateDatabase();
-                    //getActivity().getFragmentManager().popBackStackImmediate();
+                    getFragmentManager().popBackStackImmediate();
                 }
                 break;
             case R.id.order_details_delete_menu_item:
