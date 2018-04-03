@@ -8,6 +8,12 @@
     android:id="@+id/fragment_container"
     tools:context="ru.taxiplanner.romananchugov.taxiplanner.MainActivity">
 
+    <ProgressBar
+        android:id="@+id/main_activity_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
     <TextView
         android:id="@+id/update_main_activity_text"
         style="@style/OrderDetailsTextView"

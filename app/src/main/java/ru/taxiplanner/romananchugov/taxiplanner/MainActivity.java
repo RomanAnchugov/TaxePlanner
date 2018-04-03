@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import ru.taxiplanner.romananchugov.taxiplanner.fragments.BlancFragment;
 import ru.taxiplanner.romananchugov.taxiplanner.fragments.StarterFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,9 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    ActionBar actionBar;
-    Activity activity;
-    TextView textView;
+    private ActionBar actionBar;
+    private Activity activity;
+    private TextView textView;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         textView = findViewById(R.id.update_main_activity_text);
+        progressBar = findViewById(R.id.main_activity_progress_bar);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("version");
         reference.addValueEventListener(new ValueEventListener() {
@@ -57,9 +61,12 @@ public class MainActivity extends AppCompatActivity {
                 GenericTypeIndicator<Integer> generic = new GenericTypeIndicator<Integer>(){};//type indicator
                 Integer versionNumber = dataSnapshot.getValue(generic);
                 Log.i(TAG, "onDataChange: activity onCreate, version number : " + versionNumber);
+                progressBar.setVisibility(View.GONE);
                 if(versionNumber == VERSION_NUMBER){
+                    textView.setVisibility(View.GONE);
                     goToFragment(new StarterFragment(), activity, false);
                 }else{
+                    goToFragment(new BlancFragment(), activity, false);
                     Toast.makeText(activity, R.string.update_app, Toast.LENGTH_LONG).show();
                     textView.setVisibility(View.VISIBLE);
                 }
@@ -96,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = activity.getFragmentManager();
         for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
             fm.popBackStack();
+        }
+    }
+    public void removeAllFragments(){
+        for(android.support.v4.app.Fragment fragment:getSupportFragmentManager().getFragments()){
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
     }
 
