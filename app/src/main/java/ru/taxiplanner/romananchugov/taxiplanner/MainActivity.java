@@ -9,13 +9,28 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import ru.taxiplanner.romananchugov.taxiplanner.fragments.StarterFragment;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int VERSION_NUMBER = 2;
+
+
     private static final String TAG = "MainActivity";
 
     ActionBar actionBar;
+    Activity activity;
+    TextView textView;
 
 
     @Override
@@ -25,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
 
          actionBar = getSupportActionBar();
+         activity = this;
 
         if(getSupportActionBar() != null){
 
@@ -32,7 +48,28 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        goToFragment(new StarterFragment(), this, false);
+        textView = findViewById(R.id.update_main_activity_text);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("version");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<Integer> generic = new GenericTypeIndicator<Integer>(){};//type indicator
+                Integer versionNumber = dataSnapshot.getValue(generic);
+                Log.i(TAG, "onDataChange: activity onCreate, version number : " + versionNumber);
+                if(versionNumber == VERSION_NUMBER){
+                    goToFragment(new StarterFragment(), activity, false);
+                }else{
+                    Toast.makeText(activity, R.string.update_app, Toast.LENGTH_LONG).show();
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

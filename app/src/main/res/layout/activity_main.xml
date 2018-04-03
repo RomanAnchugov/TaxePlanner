@@ -8,5 +8,15 @@
     android:id="@+id/fragment_container"
     tools:context="ru.taxiplanner.romananchugov.taxiplanner.MainActivity">
 
+    <TextView
+        android:id="@+id/update_main_activity_text"
+        style="@style/OrderDetailsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/new_version_is_available_please_download_it"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>
