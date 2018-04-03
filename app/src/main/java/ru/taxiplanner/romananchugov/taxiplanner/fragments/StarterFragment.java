@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -53,11 +55,15 @@ public class StarterFragment extends Fragment {
         super.onStart();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
+
         if(currentUser != null
-                && (currentUser.isEmailVerified()
-                || (currentUser.getPhoneNumber() != null
-                && !currentUser.getPhoneNumber().equals("")))){
+                && currentUser.getPhoneNumber() != null
+                && !currentUser.getPhoneNumber().equals("")
+                && isOnline()){
             goToSearchFragment();
+        }else if(!isOnline()){
+            Snackbar.make(getView(), "No internet, try again later", Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -96,12 +102,14 @@ public class StarterFragment extends Fragment {
             public void onClick(View view) {
 
                 //phone number login
-                if(isValidInput()) {
+                if(isValidInput() && isOnline()) {
                     progressBar.setVisibility(View.VISIBLE);
                     String phoneNumber = userPhoneNumber.getText().toString();
                     checkExistence(phoneNumber);
-                }else{
+                }else if(!isValidInput()){
                     Snackbar.make(getView(), "Invalid input", Snackbar.LENGTH_SHORT).show();
+                }else if(!isOnline()){
+                    Snackbar.make(getView(), "No internet, try again later", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -180,5 +188,14 @@ public class StarterFragment extends Fragment {
 
             }
         });
+    }
+
+    public boolean isOnline(){
+
+            ConnectivityManager cm =
+                    (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnectedOrConnecting();
+
     }
 }
