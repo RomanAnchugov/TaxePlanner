@@ -111,9 +111,13 @@ public class UserSettingsFragment extends Fragment{
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                MainActivity.clearBackStack(getActivity());
-                MainActivity.goToFragment(new StarterFragment(), getActivity(), false);
+                if(isOnline()) {
+                    FirebaseAuth.getInstance().signOut();
+                    MainActivity.clearBackStack(getActivity());
+                    MainActivity.goToFragment(new StarterFragment(), getActivity(), false);
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         progressBar = v.findViewById(R.id.user_setting_progress_bar);
@@ -167,11 +171,19 @@ public class UserSettingsFragment extends Fragment{
         switch (item.getItemId()){
             case R.id.user_settings_menu_submit_changes:
                 Log.i(TAG, "onOptionsItemSelected: submit settings button clicked");
-                toggleMenuOptions();
-                updateDatabase();
+                if(isOnline()) {
+                    toggleMenuOptions();
+                    updateDatabase();
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.user_setting_menu_edit_info:
-                toggleMenuOptions();
+                if(isOnline()) {
+                    toggleMenuOptions();
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
                 Log.i(TAG, "onOptionsItemSelected: edit settings button clicked");
                 break;
         }
@@ -228,6 +240,15 @@ public class UserSettingsFragment extends Fragment{
         }
     }
 
+    public boolean isOnline(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView placeFromTextView;
@@ -281,4 +302,5 @@ public class UserSettingsFragment extends Fragment{
            return orders.size();
         }
     }
+
 }

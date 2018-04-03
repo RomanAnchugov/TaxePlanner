@@ -169,28 +169,32 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "onClick: functional button");
+                if(isOnline()) {
 
-                if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
-                    dateTextView.setText(orderItem.getDate());
-                    timeTextView.setText(orderItem.getTime());
-                    descriptionEditText.setText(orderItem.getDescription());
-                    numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() + "");
-                    placeFromEditText.setText(orderItem.getPlaceFrom());
-                    placeToEditText.setText(orderItem.getPlaceTo());
-                    toggleEditMode(true);
-                } else {
-                    if (!joined(FirebaseAuth.getInstance().getUid())) {
-                        if (orderItem.getJoinedUsers().size() < orderItem.getNumberOfSeatsInCar()) {
-                            orderItem.addJoinedUser(FirebaseAuth.getInstance().getUid());
-                            FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
-                        } else {
-                            Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
-                        }
+                    if (FirebaseAuth.getInstance().getUid().equals(orderItem.getUserCreatedId())) {
+                        dateTextView.setText(orderItem.getDate());
+                        timeTextView.setText(orderItem.getTime());
+                        descriptionEditText.setText(orderItem.getDescription());
+                        numberOfSeatsTextView.setText(orderItem.getNumberOfSeatsInCar() + "");
+                        placeFromEditText.setText(orderItem.getPlaceFrom());
+                        placeToEditText.setText(orderItem.getPlaceTo());
+                        toggleEditMode(true);
                     } else {
-                        orderItem.removeJoinedUser(FirebaseAuth.getInstance().getUid());
-                        FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
+                        if (!joined(FirebaseAuth.getInstance().getUid())) {
+                            if (orderItem.getJoinedUsers().size() < orderItem.getNumberOfSeatsInCar()) {
+                                orderItem.addJoinedUser(FirebaseAuth.getInstance().getUid());
+                                FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
+                            } else {
+                                Snackbar.make(getView(), "There are no seats here", Snackbar.LENGTH_LONG).show();
+                            }
+                        } else {
+                            orderItem.removeJoinedUser(FirebaseAuth.getInstance().getUid());
+                            FirebaseDatabase.getInstance().getReference("orders/" + position).setValue(orderItem);
+                        }
+                        getFragmentManager().popBackStackImmediate();
                     }
-                    getFragmentManager().popBackStackImmediate();
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -203,14 +207,22 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.order_details_submit_menu_item:
-                OrderChangesSubmitDialog submitDialog = new OrderChangesSubmitDialog();
-                submitDialog.setTargetFragment(this, REQUEST_CODE_FOR_SUBMIT);
-                submitDialog.show(getFragmentManager(), "submit");
+                if(isOnline()) {
+                    OrderChangesSubmitDialog submitDialog = new OrderChangesSubmitDialog();
+                    submitDialog.setTargetFragment(this, REQUEST_CODE_FOR_SUBMIT);
+                    submitDialog.show(getFragmentManager(), "submit");
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.order_details_delete_menu_item:
-                OrderDeleteAcceptDialog deleteAcceptDialog = new OrderDeleteAcceptDialog();
-                deleteAcceptDialog.setTargetFragment(this, REQUEST_CODE_FOR_DELETE);
-                deleteAcceptDialog.show(getFragmentManager(), "delete");
+                if(isOnline()) {
+                    OrderDeleteAcceptDialog deleteAcceptDialog = new OrderDeleteAcceptDialog();
+                    deleteAcceptDialog.setTargetFragment(this, REQUEST_CODE_FOR_DELETE);
+                    deleteAcceptDialog.show(getFragmentManager(), "delete");
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
                 break;
 
         }
@@ -302,6 +314,15 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                 }
             });
         }
+    }
+
+    public boolean isOnline(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
     }
 
     @Override

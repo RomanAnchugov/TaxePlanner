@@ -3,11 +3,15 @@ package ru.taxiplanner.romananchugov.taxiplanner.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -222,7 +226,11 @@ public class SearchFragment extends Fragment{
         createNewOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToCreateNewOrderFragment();
+                if(isOnline()) {
+                    goToCreateNewOrderFragment();
+                }else{
+                    Snackbar.make(getView(), R.string.no_internet_connection, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -360,6 +368,14 @@ public class SearchFragment extends Fragment{
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
         transaction.commit();
+    }
+    public boolean isOnline(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
     }
 
     @Override
