@@ -364,6 +364,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                 break;
             case REQUEST_CODE_FOR_DELETE:
                 if(resultCode == Activity.RESULT_OK){
+                    Log.i(TAG, "onActivityResult: result for delete dialog");
                     Bundle bundle = data.getExtras();
                     String ans = bundle.getString("ans");
                     if(ans.equals("true")){
@@ -371,12 +372,14 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+                                        Log.i(TAG, "onComplete: delete on complete, position: + " + position);
+                                        //getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
                                         getFragmentManager().popBackStackImmediate();
                                     }
                                 });
                     }
                 }
+                break;
             case REQUEST_CODE_FOR_SUBMIT:
                 if(resultCode == Activity.RESULT_OK){
                     Bundle bundle = data.getExtras();
@@ -389,6 +392,7 @@ public class OrderDetailsFragment extends Fragment implements View.OnClickListen
                         }
                     }
                 }
+                break;
         }
     }
 

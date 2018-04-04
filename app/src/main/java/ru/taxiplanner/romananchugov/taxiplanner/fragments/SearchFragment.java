@@ -114,7 +114,7 @@ public class SearchFragment extends Fragment{
                 if(list != null) {
                     Log.i(TAG, "onDataChange: list != null; sort");
                     Collections.sort(list, new OrderItemsComparator());
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
+
                     orders.clear();
                     orders = list;
 
@@ -125,7 +125,8 @@ public class SearchFragment extends Fragment{
                             i--;
                         }
                     }
-                    ref.setValue(list);
+                    //DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
+                    //ref.setValue(orders);
 
                     ordersWithSearch.clear();
                     ordersWithSearch.addAll(list);
@@ -248,7 +249,6 @@ public class SearchFragment extends Fragment{
             }
         });
 
-        Log.i(TAG, "onCreateView: here");
         progressBar = v.findViewById(R.id.search_fragment_progress_bar);
         if(orders.size() == 0 && ordersWithSearch.size() == 0){
             progressBar.setVisibility(View.VISIBLE);
