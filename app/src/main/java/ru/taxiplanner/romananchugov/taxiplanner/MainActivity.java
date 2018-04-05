@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -54,29 +57,36 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.update_main_activity_text);
         progressBar = findViewById(R.id.main_activity_progress_bar);
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("version");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<Integer> generic = new GenericTypeIndicator<Integer>(){};//type indicator
-                Integer versionNumber = dataSnapshot.getValue(generic);
-                Log.i(TAG, "onDataChange: activity onCreate, version number : " + versionNumber);
-                progressBar.setVisibility(View.GONE);
-                if(versionNumber == VERSION_NUMBER){
-                    textView.setVisibility(View.GONE);
-                    goToFragment(new StarterFragment(), activity, false);
-                }else{
-                    goToFragment(new BlancFragment(), activity, false);
-                    Toast.makeText(activity, R.string.update_app, Toast.LENGTH_LONG).show();
-                    textView.setVisibility(View.VISIBLE);
+        if(isOnline()) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("version");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    GenericTypeIndicator<Integer> generic = new GenericTypeIndicator<Integer>() {
+                    };//type indicator
+                    Integer versionNumber = dataSnapshot.getValue(generic);
+                    Log.i(TAG, "onDataChange: activity onCreate, version number : " + versionNumber);
+                    progressBar.setVisibility(View.GONE);
+                    if (versionNumber == VERSION_NUMBER) {
+                        textView.setVisibility(View.GONE);
+                        goToFragment(new StarterFragment(), activity, false);
+                    } else {
+                        goToFragment(new BlancFragment(), activity, false);
+                        Toast.makeText(activity, R.string.update_app, Toast.LENGTH_LONG).show();
+                        textView.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }else{
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(R.string.no_internet_connection);
+            progressBar.setVisibility(View.GONE);
+        }
 
     }
 
@@ -121,5 +131,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return false;
+    }
+
+    public boolean isOnline(){
+
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
     }
 }
