@@ -115,6 +115,12 @@ public class SearchFragment extends Fragment{
                     Log.i(TAG, "onDataChange: list != null; sort");
                     Collections.sort(list, new OrderItemsComparator());
 
+                    boolean pushFlag = false;
+                    if(!orders.equals(list)){
+                        Log.i(TAG, "onDataChange: orders !equals list => push sorted array");
+                        pushFlag = true;
+                    }
+
                     orders.clear();
                     orders = list;
 
@@ -125,8 +131,11 @@ public class SearchFragment extends Fragment{
                             i--;
                         }
                     }
-                    //DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
-                    //ref.setValue(orders);
+
+                    if(pushFlag){
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
+                        ref.setValue(orders);
+                    }
 
                     ordersWithSearch.clear();
                     ordersWithSearch.addAll(list);
@@ -271,7 +280,7 @@ public class SearchFragment extends Fragment{
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.i(TAG, "onClick: yea, it works!!!");
+                    Log.i(TAG, "onClick: search fragment item clicked, position: " + getAdapterPosition());
                     goToOrderDetailsFragment(getAdapterPosition(), orders.get(getAdapterPosition()));
                 }
             });
